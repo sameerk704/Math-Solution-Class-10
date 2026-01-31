@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "Formula Guide",
+    "slug": "jiguu-math-tool",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/images/icon.png",
+    "scheme": "jiguu",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.jiguu.mathtool"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#FAFBFD",
+        "foregroundImage": "./assets/images/icon.png"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "package": "com.jiguu.mathtool"
+    },
+    "web": {
+      "output": "single",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#FAFBFD",
+          "dark": {
+            "backgroundColor": "#1A1A2E"
+          }
+        }
+      ],
+      "expo-web-browser"
+    ],
+    "experiments": {
+      "reactCompiler": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0f966fec-8c15-4ab2-a6a4-55cba653fae3"
+      }
+    }
+  }
+}
