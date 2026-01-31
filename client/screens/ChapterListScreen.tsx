@@ -5,16 +5,10 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { ChapterCard } from "@/components/ChapterCard";
-import { ThemedText } from "@/components/ThemedText";
 import { EmptyState } from "@/components/EmptyState";
-import { JiguuColors, Spacing, Typography } from "@/constants/theme";
+import { JiguuColors, Spacing } from "@/constants/theme";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
-import {
-  algebraChapters,
-  geometryChapters,
-  trigonometryChapters,
-  Chapter,
-} from "@/data/formulas";
+import { getClass10AllChapters, Chapter } from "@/data/formulas";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -23,16 +17,10 @@ const Separator = memo(() => <View style={styles.separator} />);
 function ChapterListScreen() {
   const navigation = useNavigation<NavigationProp>();
 
-  // 👉 ALL Class 10 chapters from all subjects
-  const chapters: Chapter[] = [
-    ...algebraChapters,
-    ...trigonometryChapters,
-    ...geometryChapters,
-  ].filter((ch) => ch.classLevel === 10);
+  const chapters = getClass10AllChapters();
 
   const renderItem = useCallback(
-  ({ item }: { item: Chapter }) => {
-    return (
+    ({ item }: { item: Chapter }) => (
       <ChapterCard
         testID={'chapter-card-${item.id}'}
         number={item.number}
@@ -42,31 +30,12 @@ function ChapterListScreen() {
           navigation.navigate("Formula", {
             chapterId: item.id,
             chapterName: item.name,
-            subject: "algebra",
+            subject: item.subject,
           })
         }
       />
-    );
-  },
-  [navigation]
-);
-  const renderHeader = useCallback(
-    () => (
-      <View style={styles.header}>
-        <ThemedText style={styles.title}>Class 10 Chapters</ThemedText>
-      </View>
     ),
-    []
-  );
-
-  const renderEmptyState = useCallback(
-    () => (
-      <EmptyState
-        title="No Chapters Found"
-        message="No Class 10 chapters available."
-      />
-    ),
-    []
+    [navigation]
   );
 
   return (
@@ -81,8 +50,12 @@ function ChapterListScreen() {
         ]}
         showsVerticalScrollIndicator={false}
         ItemSeparatorComponent={Separator}
-        ListHeaderComponent={renderHeader}
-        ListEmptyComponent={renderEmptyState}
+        ListEmptyComponent={
+          <EmptyState
+            title="No Chapters Found"
+            message="Chapters will be added soon."
+          />
+        }
       />
     </ScreenWrapper>
   );
@@ -99,14 +72,6 @@ const styles = StyleSheet.create({
   emptyContent: {
     flex: 1,
     justifyContent: "center",
-  },
-  header: {
-    marginBottom: Spacing.xl,
-    alignItems: "center",
-  },
-  title: {
-    ...Typography.h2,
-    color: JiguuColors.textPrimary,
   },
   separator: {
     height: Spacing.md,
