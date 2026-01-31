@@ -3,7 +3,12 @@ import { StyleSheet, View, Pressable } from "react-native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { BorderRadius, Spacing, Typography } from "@/constants/theme";
-import { formulaData, Formula } from "@/data/formulas";
+
+import {
+  getClass10AllChapters,
+  getFormulasForChapter,
+  Formula,
+} from "@/data/formulas";
 
 const WIDGET_HEIGHT = 56;
 
@@ -19,20 +24,27 @@ const gradientColors = [
 ];
 
 function getAllFormulas(): Formula[] {
-  const allFormulasList: Formula[] = [];
-  
-  Object.values(formulaData).forEach((formulas: Formula[]) => {
-    formulas.forEach((f: Formula) => {
-      if (!f.title.toLowerCase().includes("what is") && f.formula.length < 80) {
-        allFormulasList.push(f);
+  const chapters = getClass10AllChapters();
+
+  const all: Formula[] = [];
+
+  chapters.forEach((chapter) => {
+    const formulas = getFormulasForChapter(chapter.id);
+
+    formulas.forEach((f) => {
+      if (
+        !f.title.toLowerCase().includes("what is") &&
+        f.formula.length < 80
+      ) {
+        all.push(f);
       }
     });
   });
 
-  return allFormulasList;
+  return all;
 }
 
-function getRandomFormula(allFormulas: Formula[]): { formula: Formula; colorIndex: number } {
+function getRandomFormula(allFormulas: Formula[]) {
   const randomIndex = Math.floor(Math.random() * allFormulas.length);
   const colorIndex = Math.floor(Math.random() * gradientColors.length);
 
@@ -44,8 +56,11 @@ function getRandomFormula(allFormulas: Formula[]): { formula: Formula; colorInde
 
 export const DailyFormulaWidget = memo(function DailyFormulaWidget() {
   const [allFormulas] = useState(() => getAllFormulas());
-  const [currentData, setCurrentData] = useState(() => getRandomFormula(allFormulas));
-  
+
+  const [currentData, setCurrentData] = useState(() =>
+    getRandomFormula(allFormulas)
+  );
+
   const colors = gradientColors[currentData.colorIndex];
 
   const handlePress = useCallback(() => {
@@ -53,19 +68,29 @@ export const DailyFormulaWidget = memo(function DailyFormulaWidget() {
   }, [allFormulas]);
 
   return (
-    <Pressable 
+    <Pressable
       testID="daily-formula-widget"
       style={[styles.container, { backgroundColor: colors.start }]}
       onPress={handlePress}
     >
-      <View style={[styles.glowCircle1, { backgroundColor: colors.glow }]} />
-      <View style={[styles.glowCircle2, { backgroundColor: colors.end }]} />
-      
+      <View
+        style={[styles.glowCircle1, { backgroundColor: colors.glow }]}
+      />
+      <View
+        style={[styles.glowCircle2, { backgroundColor: colors.end }]}
+      />
+
       <View style={styles.textContainer}>
         <ThemedText style={styles.formulaTitle} numberOfLines={1}>
           {currentData.formula.title}
         </ThemedText>
-        <ThemedText style={styles.formulaText} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
+
+        <ThemedText
+          style={styles.formulaText}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.7}
+        >
           {currentData.formula.formula.split("\n")[0]}
         </ThemedText>
       </View>
