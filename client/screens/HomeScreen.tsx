@@ -36,35 +36,18 @@ function HomeScreen() {
           <View style={styles.buttonWrapper}>
             <ColorButton
               testID="button-algebra"
-              title="Algebra"
+              title="All Chapters"
               color={JiguuColors.algebra}
               onPress={() => navigation.navigate("Subject", { subject: "algebra" })}
             />
           </View>
 
-          <View style={styles.buttonWrapper}>
-            <ColorButton
-              testID="button-trigonometry"
-              title="Trigonometry"
-              color={JiguuColors.trigonometry}
-              onPress={() => navigation.navigate("Subject", { subject: "trigonometry" })}
-            />
-          </View>
-
-          <View style={styles.buttonWrapper}>
-            <ColorButton
-              testID="button-geometry"
-              title="Geometry"
-              color={JiguuColors.geometry}
-              onPress={() => navigation.navigate("Subject", { subject: "geometry" })}
-            />
-          </View>
-
+         
           <View style={styles.buttonWrapper}>
             <ColorButton
               testID="button-quick-notes"
               title="Quick Notes"
-              color="#26A69A"
+              color={JiguuColors.geometry}
               onPress={() => navigation.navigate("QuickNotes")}
             />
           </View>
