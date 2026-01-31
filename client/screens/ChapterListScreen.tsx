@@ -20,10 +20,10 @@ function ChapterListScreen() {
   const chapters = getClass10AllChapters();
 
   const renderItem = useCallback(
-    ({ item, index }: { item: Chapter; index: number }) => (
+    ({ item }: { item: Chapter }) => (
       <ChapterCard
-        testID={'chapter-card-${item.id}'}
-        number={index + 1}
+        testID={`chapter-card-${item.id}`}
+        number={item.number}
         name={item.name}
         color={JiguuColors.algebra}
         onPress={() =>
