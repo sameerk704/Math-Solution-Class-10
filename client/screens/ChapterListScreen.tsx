@@ -15,30 +15,23 @@ import {
   trigonometryChapters,
   geometryChapters,
   Chapter,
-  Subject,
 } from "@/data/formulas";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-const CLASS_LEVEL: 10 = 10;
+const CLASS_LEVEL = 10;
 
-const subjectColors: Record<Subject, string> = {
-  algebra: JiguuColors.algebra,
-  trigonometry: JiguuColors.trigonometry,
-  geometry: JiguuColors.geometry,
-};
+// merge all subjects → class 10 only
+const ALL_CLASS10_CHAPTERS: Chapter[] = [
+  ...algebraChapters,
+  ...trigonometryChapters,
+  ...geometryChapters,
+].filter(ch => ch.classLevel === CLASS_LEVEL);
 
 const Separator = memo(() => <View style={styles.separator} />);
 
 function ChapterListScreen() {
   const navigation = useNavigation<NavigationProp>();
-
-  // 🔥 ALL CLASS 10 chapters from every subject
-  const chapters: Chapter[] = [
-    ...algebraChapters.filter(c => c.classLevel === CLASS_LEVEL),
-    ...trigonometryChapters.filter(c => c.classLevel === CLASS_LEVEL),
-    ...geometryChapters.filter(c => c.classLevel === CLASS_LEVEL),
-  ];
 
   const renderItem = useCallback(
     ({ item }: { item: Chapter }) => (
@@ -46,7 +39,7 @@ function ChapterListScreen() {
         testID={chapter-card-${item.id}}
         number={item.number}
         name={item.name}
-        color={subjectColors[item.subject]}
+        color={JiguuColors.algebra}
         onPress={() =>
           navigation.navigate("Formula", {
             chapterId: item.id,
@@ -63,7 +56,7 @@ function ChapterListScreen() {
     () => (
       <View style={styles.header}>
         <ThemedText style={styles.title}>
-          All Chapters – Class 10
+          Class 10 – All Chapters
         </ThemedText>
       </View>
     ),
@@ -74,7 +67,7 @@ function ChapterListScreen() {
     () => (
       <EmptyState
         title="No Chapters Found"
-        message="No chapters available for Class 10."
+        message="No Class 10 chapters available."
       />
     ),
     []
@@ -83,12 +76,12 @@ function ChapterListScreen() {
   return (
     <ScreenWrapper showBackButton>
       <FlatList
-        data={chapters}
+        data={ALL_CLASS10_CHAPTERS}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={[
           styles.listContent,
-          chapters.length === 0 && styles.emptyContent,
+          ALL_CLASS10_CHAPTERS.length === 0 ? styles.emptyContent : null,
         ]}
         showsVerticalScrollIndicator={false}
         ItemSeparatorComponent={Separator}
