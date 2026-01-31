@@ -31,9 +31,10 @@ function ChapterListScreen() {
   ].filter((ch) => ch.classLevel === 10);
 
   const renderItem = useCallback(
-    ({ item }: { item: Chapter }) => (
+  ({ item }: { item: Chapter }) => {
+    return (
       <ChapterCard
-        testID={chapter-card-${item.id}}
+        testID={'chapter-card-${item.id}'}
         number={item.number}
         name={item.name}
         color={JiguuColors.algebra}
@@ -41,14 +42,14 @@ function ChapterListScreen() {
           navigation.navigate("Formula", {
             chapterId: item.id,
             chapterName: item.name,
-            subject: item.subject,
+            subject: "algebra",
           })
         }
       />
-    ),
-    [navigation]
-  );
-
+    );
+  },
+  [navigation]
+);
   const renderHeader = useCallback(
     () => (
       <View style={styles.header}>
