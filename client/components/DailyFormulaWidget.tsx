@@ -3,12 +3,7 @@ import { StyleSheet, View, Pressable } from "react-native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { BorderRadius, Spacing, Typography } from "@/constants/theme";
-
-import {
-  getClass10AllChapters,
-  getFormulasForChapter,
-  Formula,
-} from "@/data/formulas";
+import { getAllFormulasFlat, Formula } from "@/data/formulas";
 
 const WIDGET_HEIGHT = 56;
 
@@ -23,28 +18,9 @@ const gradientColors = [
   { start: "#F97316", end: "#F59E0B", glow: "#FBBF24" },
 ];
 
-function getAllFormulas(): Formula[] {
-  const chapters = getClass10AllChapters();
-
-  const all: Formula[] = [];
-
-  chapters.forEach((chapter) => {
-    const formulas = getFormulasForChapter(chapter.id);
-
-    formulas.forEach((f) => {
-      if (
-        !f.title.toLowerCase().includes("what is") &&
-        f.formula.length < 80
-      ) {
-        all.push(f);
-      }
-    });
-  });
-
-  return all;
-}
-
-function getRandomFormula(allFormulas: Formula[]) {
+function getRandomFormula(
+  allFormulas: Formula[]
+): { formula: Formula; colorIndex: number } {
   const randomIndex = Math.floor(Math.random() * allFormulas.length);
   const colorIndex = Math.floor(Math.random() * gradientColors.length);
 
@@ -55,7 +31,7 @@ function getRandomFormula(allFormulas: Formula[]) {
 }
 
 export const DailyFormulaWidget = memo(function DailyFormulaWidget() {
-  const [allFormulas] = useState(() => getAllFormulas());
+  const [allFormulas] = useState<Formula[]>(() => getAllFormulasFlat());
 
   const [currentData, setCurrentData] = useState(() =>
     getRandomFormula(allFormulas)
@@ -67,18 +43,16 @@ export const DailyFormulaWidget = memo(function DailyFormulaWidget() {
     setCurrentData(getRandomFormula(allFormulas));
   }, [allFormulas]);
 
+  if (!currentData?.formula) return null;
+
   return (
     <Pressable
       testID="daily-formula-widget"
       style={[styles.container, { backgroundColor: colors.start }]}
       onPress={handlePress}
     >
-      <View
-        style={[styles.glowCircle1, { backgroundColor: colors.glow }]}
-      />
-      <View
-        style={[styles.glowCircle2, { backgroundColor: colors.end }]}
-      />
+      <View style={[styles.glowCircle1, { backgroundColor: colors.glow }]} />
+      <View style={[styles.glowCircle2, { backgroundColor: colors.end }]} />
 
       <View style={styles.textContainer}>
         <ThemedText style={styles.formulaTitle} numberOfLines={1}>
