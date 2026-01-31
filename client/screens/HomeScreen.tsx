@@ -38,7 +38,8 @@ function HomeScreen() {
               testID="button-algebra"
               title="All Chapters"
               color={JiguuColors.algebra}
-              onPress={() => navigation.navigate("Class10Chapters")}  
+              onPress={() => navigation.navigate("Subject", { subject: "algebra" })}
+ 
             />
           </View>
 
