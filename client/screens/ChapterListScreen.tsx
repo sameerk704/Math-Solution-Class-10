@@ -34,23 +34,23 @@ function ChapterListScreen() {
   const navigation = useNavigation<NavigationProp>();
 
   const renderItem = useCallback(
-    ({ item }: { item: Chapter }) => (
-      <ChapterCard
-        testID={chapter-card-${item.id}}
-        number={item.number}
-        name={item.name}
-        color={JiguuColors.algebra}
-        onPress={() =>
-          navigation.navigate("Formula", {
-            chapterId: item.id,
-            chapterName: item.name,
-            subject: item.subject,
-          })
-        }
-      />
-    ),
-    [navigation]
-  );
+  ({ item }: { item: Chapter }) => (
+    <ChapterCard
+      testID={chapter-card-${item.id}}
+      number={item.number}
+      name={item.name}
+      color={JiguuColors.algebra}
+      onPress={() =>
+        navigation.navigate("Formula", {
+          chapterId: item.id,
+          chapterName: item.name,
+          subject: item.subject,
+        })
+      }
+    />
+  ),
+  [navigation]
+);
 
   const renderHeader = useCallback(
     () => (
