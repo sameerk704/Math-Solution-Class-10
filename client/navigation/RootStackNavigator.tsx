@@ -19,6 +19,7 @@ export type RootStackParamList = {
   NewsEvents: undefined;
   AboutEducator: undefined;
   QuickNotes: undefined;
+  AllChapters: undifined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -39,6 +40,7 @@ export default function RootStackNavigator() {
       <Stack.Screen name="NewsEvents" component={NewsEventsScreen} />
       <Stack.Screen name="AboutEducator" component={AboutEducatorScreen} />
       <Stack.Screen name="QuickNotes" component={QuickNotesScreen} />
+      <Stack.Screen name="AllChapters" component={ChapterListScreen} />
     </Stack.Navigator>
   );
 }
