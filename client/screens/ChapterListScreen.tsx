@@ -27,7 +27,7 @@ function ChapterListScreen() {
         name={item.name}
         color={JiguuColors.algebra}
         onPress={() =>
-          navigation.navigate("Formula", {
+          navigation.navigate("ChapterOverview", {
             chapterId: item.id,
             chapterName: item.name,
             subject: item.subject,
