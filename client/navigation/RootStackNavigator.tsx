@@ -7,13 +7,16 @@
 //
 // Includes:
 // - Home
+// - Subject
 // - Chapter list
 // - Chapter overview
-// - Intro
-// - KeyPoints
-// - MCQs
+// - Introduction screen
+// - KeyPoints screen
+// - MCQ screen
+// - Exercise screen
+// - Formula / News / About / QuickNotes
 //
-// This file defines all screen routes.
+// ALL navigable screens must be registered here.
 // --------------------------------------------------
 
 import React from "react";
@@ -25,13 +28,22 @@ import HomeScreen from "@/screens/HomeScreen";
 import SubjectScreen from "@/screens/SubjectScreen";
 import ChapterListScreen from "@/screens/ChapterListScreen";
 import ChapterOverviewScreen from "@/screens/ChapterOverviewScreen";
+
+import IntroScreen from "@/screens/IntroScreen";
+import KeyPointsScreen from "@/screens/KeyPointsScreen";
+import MCQScreen from "@/screens/MCQScreen";
+import ExerciseScreen from "@/screens/ExerciseScreen";
+
 import FormulaScreen from "@/screens/FormulaScreen";
 import NewsEventsScreen from "@/screens/NewsEventsScreen";
 import AboutEducatorScreen from "@/screens/AboutEducatorScreen";
 import QuickNotesScreen from "@/screens/QuickNotesScreen";
-import MCQScreen from "@/screens/MCQScreen";
 
 import { Subject } from "@/data/formulas";
+
+/* --------------------------------------------------
+   ROUTE TYPES
+-------------------------------------------------- */
 
 export type RootStackParamList = {
   Home: undefined;
@@ -45,15 +57,31 @@ export type RootStackParamList = {
     chapterName: string;
   };
 
-  Formula: {
+  Intro: {
     chapterId: string;
     chapterName: string;
-    subject: Subject;
+  };
+
+  KeyPoints: {
+    chapterId: string;
+    chapterName: string;
   };
 
   MCQs: {
     chapterId: string;
     chapterName: string;
+  };
+
+  Exercise: {
+    chapterId: string;
+    chapterName: string;
+    exerciseNumber: number;
+  };
+
+  Formula: {
+    chapterId: string;
+    chapterName: string;
+    subject: Subject;
   };
 
   NewsEvents: undefined;
@@ -62,6 +90,10 @@ export type RootStackParamList = {
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
+/* --------------------------------------------------
+   NAVIGATOR
+-------------------------------------------------- */
 
 export default function RootStackNavigator() {
   return (
@@ -83,9 +115,19 @@ export default function RootStackNavigator() {
         component={ChapterOverviewScreen}
       />
 
-      <Stack.Screen name="Formula" component={FormulaScreen} />
+      {/* ---------- CHAPTER SECTIONS ---------- */}
+
+      <Stack.Screen name="Intro" component={IntroScreen} />
+
+      <Stack.Screen name="KeyPoints" component={KeyPointsScreen} />
 
       <Stack.Screen name="MCQs" component={MCQScreen} />
+
+      <Stack.Screen name="Exercise" component={ExerciseScreen} />
+
+      {/* ---------- OTHERS ---------- */}
+
+      <Stack.Screen name="Formula" component={FormulaScreen} />
 
       <Stack.Screen name="NewsEvents" component={NewsEventsScreen} />
 
