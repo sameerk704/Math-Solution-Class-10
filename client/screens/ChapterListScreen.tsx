@@ -1,70 +1,51 @@
-// src/screens/ChapterListScreen.tsx
-// --------------------------------------------------
-// Shows all Class 10 chapters.
-// On click → goes to ChapterOverview screen.
-// --------------------------------------------------
-
-import React, { memo, useCallback } from "react";
-import { StyleSheet, FlatList, View } from "react-native";
+import React from "react";
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { chapters } from "../data/chapters";
 
-import { ScreenWrapper } from "@/components/ScreenWrapper";
-import { ChapterCard } from "@/components/ChapterCard";
-import { RootStackParamList } from "@/navigation/RootStackNavigator";
-import { getClass10AllChapters, Chapter } from "@/data/formulas";
-import { Spacing } from "@/constants/theme";
-
-type NavigationProp =
-  NativeStackNavigationProp<RootStackParamList>;
-
-const Separator = () => (
-  <View style={styles.separator} />
-);
-
-function ChapterListScreen() {
-  const navigation = useNavigation<NavigationProp>();
-
-  const chapters = getClass10AllChapters();
-
-  const renderItem = useCallback(
-    ({ item }: { item: Chapter }) => (
-      <ChapterCard
-        number={item.number}
-        name={item.name}
-        onPress={() =>
-          navigation.navigate("ChapterOverview", {
-            chapterId: item.id,
-            chapterName: item.name,
-          })
-        }
-      />
-    ),
-    [navigation]
-  );
+export default function ChapterListScreen() {
+  const navigation = useNavigation<any>();
 
   return (
-    <ScreenWrapper>
+    <View style={styles.container}>
       <FlatList
         data={chapters}
-        renderItem={renderItem}
         keyExtractor={(item) => item.id}
-        ItemSeparatorComponent={Separator}
         contentContainerStyle={styles.list}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.chapterCard}
+            onPress={() =>
+              navigation.navigate("ChapterOverview", {
+                chapter: item,
+              })
+            }
+          >
+            <Text style={styles.chapterTitle}>{item.title}</Text>
+          </TouchableOpacity>
+        )}
       />
-    </ScreenWrapper>
+    </View>
   );
 }
 
-export default memo(ChapterListScreen);
-
 const styles = StyleSheet.create({
-  list: {
-    paddingHorizontal: Spacing.xl,
-    paddingTop: Spacing.lg,
-    paddingBottom: 120,
+  container: {
+    flex: 1,
   },
-  separator: {
-    height: Spacing.md,
+  list: {
+    padding: 20,
+  },
+  chapterCard: {
+    backgroundColor: "#22273a",
+    padding: 18,
+    borderRadius: 14,
+    marginBottom: 14,
+  },
+  chapterTitle: {
+    fontSize: 18,
+    color: "#fff",
+    fontWeight: "600",
+    textAlign: "center",
   },
 });
