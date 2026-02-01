@@ -41,8 +41,8 @@ export default function ChapterOverviewScreen() {
 
     // ---- Exercises dynamic ----
     ...chapter.exercises.map((ex) => ({
-      id: exercise-${ex.number},
-      title: Exercise ${ex.number},
+      id: `exercise-${ex.number}`,
+      title: `Exercise ${ex.number}`,
       type: "exercise",
       number: ex.number,
     })),
