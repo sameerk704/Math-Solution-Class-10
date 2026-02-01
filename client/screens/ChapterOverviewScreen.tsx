@@ -1,5 +1,21 @@
+/**
+ * File: ChapterOverviewScreen.tsx
+ *
+ * Purpose:
+ * Shows overview buttons for a chapter:
+ * - Introduction
+ * - Key Points
+ * - MCQs
+ * - Exercises (dynamic based on chapter)
+ */
+
 import React, { memo } from "react";
-import { StyleSheet, View, FlatList } from "react-native";
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  Pressable,
+} from "react-native";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 
 import { ScreenWrapper } from "@/components/ScreenWrapper";
@@ -7,36 +23,65 @@ import { ThemedText } from "@/components/ThemedText";
 import { JiguuColors, Spacing, Typography } from "@/constants/theme";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
-import {
-  getChapterContent,
-  ChapterSection,
-} from "@/data/chaptersContent";
+import { getChapterContent } from "@/data/chaptersContent";
 
-type RouteProps = RouteProp<RootStackParamList, "ChapterOverview">;
+type RouteProps = RouteProp<
+  RootStackParamList,
+  "ChapterOverview"
+>;
 
 function ChapterOverviewScreen() {
   const route = useRoute<RouteProps>();
-  const { chapterId, chapterName } = route.params;
+  const navigation = useNavigation();
 
-  const content = getChapterContent(chapterId);
+  const { chapterId, chapterName } = route.params ?? {};
+
+  const content = getChapterContent?.(chapterId);
+
+  // 🛑 SAFETY — prevents crash
+  if (!content) {
+    return (
+      <ScreenWrapper showBackButton>
+        <ThemedText>No chapter content found.</ThemedText>
+      </ScreenWrapper>
+    );
+  }
+
+  const sections = content.sections ?? [];
 
   return (
     <ScreenWrapper showBackButton>
+      {/* HEADER */}
       <View style={styles.header}>
-        <ThemedText style={styles.title}>{chapterName}</ThemedText>
+        <ThemedText style={styles.title}>
+          {chapterName}
+        </ThemedText>
       </View>
 
+      {/* BUTTON LIST */}
       <FlatList
-        data={content.sections}
+        data={sections}
         keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
         renderItem={({ item }) => (
-          <View style={styles.sectionCard}>
+          <Pressable
+            style={styles.sectionCard}
+            onPress={() =>
+              navigation.navigate(
+                item.route as never,
+                {
+                  chapterId,
+                  chapterName,
+                  sectionId: item.id,
+                } as never
+              )
+            }
+          >
             <ThemedText style={styles.sectionTitle}>
               {item.title}
             </ThemedText>
-          </View>
+          </Pressable>
         )}
-        contentContainerStyle={styles.list}
       />
     </ScreenWrapper>
   );
@@ -49,22 +94,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: Spacing.xl,
   },
+
   title: {
     ...Typography.h3,
     fontWeight: "700",
   },
+
   list: {
     paddingHorizontal: Spacing.xl,
     paddingBottom: 120,
   },
+
   sectionCard: {
     backgroundColor: JiguuColors.surface,
-    padding: Spacing.lg,
-    borderRadius: 14,
-    marginBottom: Spacing.md,
+    paddingVertical: Spacing.xl,
+    paddingHorizontal: Spacing.lg,
+    borderRadius: 18,
+    marginBottom: Spacing.lg,
   },
+
   sectionTitle: {
     ...Typography.body,
     fontWeight: "600",
+    textAlign: "center",
   },
 });
