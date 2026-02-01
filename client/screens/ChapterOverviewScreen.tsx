@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
 
   title: {
     ...Typography.h3,
-    fontWeight: "650",
+    fontWeight: "600",
     textAlign: "center",
   },
 
