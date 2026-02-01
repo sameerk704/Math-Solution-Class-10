@@ -1,5 +1,3 @@
-
-console.log("FORMULA PARAMS...", route.params) ;
 import React, { memo, useCallback } from "react";
 import { StyleSheet, FlatList, View } from "react-native";
 import { useRoute, RouteProp } from "@react-navigation/native";
@@ -7,9 +5,11 @@ import { useRoute, RouteProp } from "@react-navigation/native";
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { FormulaCard } from "@/components/FormulaCard";
 import { EmptyState } from "@/components/EmptyState";
+import { ThemedText } from "@/components/ThemedText";
+
 import { JiguuColors, Spacing, Typography } from "@/constants/theme";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
-import { getFormulasForChapter, Formula, Subject } from "@/data/formulas";
+import { getFormulasForChapter, Formula } from "@/data/formulas";
 
 type FormulaRouteProp = RouteProp<RootStackParamList, "Formula">;
 
@@ -18,19 +18,19 @@ const Separator = memo(() => <View style={styles.separator} />);
 function FormulaScreen() {
   const route = useRoute<FormulaRouteProp>();
 
-const {
-  chapterId = "",
-  chapterName = "",
-  subject = "algebra",
-} = route.params ?? {};
+  const {
+    chapterId = "",
+    chapterName = "",
+    subject = "algebra",
+  } = route.params ?? {};
+
+  console.log("FORMULA PARAMS...", route.params);
+
   const formulas = getFormulasForChapter(chapterId);
 
   const renderItem = useCallback(
     ({ item }: { item: Formula }) => (
-      <FormulaCard
-        title={item.title}
-        formula={item.formula}
-      />
+      <FormulaCard title={item.title} formula={item.formula} />
     ),
     []
   );
@@ -38,11 +38,9 @@ const {
   const renderEmptyState = useCallback(
     () => (
       <EmptyState
-  title="No Formulas Yet"
-  message={`Formulas for "${chapterName}" will be added soon.`}
-    />
-     
-    
+        title="No Formulas Yet"
+        message={Formulas for "${chapterName}" will be added soon.}
+      />
     ),
     [chapterName]
   );
