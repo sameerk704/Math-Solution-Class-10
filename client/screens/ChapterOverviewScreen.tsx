@@ -1,26 +1,11 @@
-// src/screens/ChapterOverviewScreen.tsx
-// --------------------------------------------------
-// CHAPTER OVERVIEW SCREEN
-//
-// Purpose:
-// Displays all sections inside a chapter:
-//
-// - Introduction
-// - Key Points
-// - MCQs
-// - Exercise 1 / 2 / 3 ...
-//
-// Data Source:
-// Uses getChapterContent() from chaptersContent.ts
-//
-// Safety:
-// - All arrays are guaranteed non-null.
-// - No runtime crashes on map/length.
-//
-// --------------------------------------------------
-
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
@@ -30,7 +15,7 @@ import { JiguuColors } from "@/constants/theme";
 type RouteProps = RouteProp<RootStackParamList, "ChapterOverview">;
 
 export default function ChapterOverviewScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const route = useRoute<RouteProps>();
 
   const { chapterId, chapterName } = route.params;
@@ -38,11 +23,25 @@ export default function ChapterOverviewScreen() {
   const chapter = getChapterContent(chapterId);
 
   const sections = [
-    { id: "intro", title: "Introduction", type: "intro" },
-    { id: "kp", title: "Key Points", type: "keypoints" },
-    { id: "mcq", title: "MCQs", type: "mcqs" },
+    {
+      id: "intro",
+      title: "Introduction",
+      type: "intro",
+    },
+    {
+      id: "keypoints",
+      title: "Key Points",
+      type: "keypoints",
+    },
+    {
+      id: "mcqs",
+      title: "MCQs",
+      type: "mcqs",
+    },
+
+    // ---- Exercises dynamic ----
     ...chapter.exercises.map((ex) => ({
-      id: ex-${ex.number},
+      id: exercise-${ex.number},
       title: Exercise ${ex.number},
       type: "exercise",
       number: ex.number,
@@ -50,7 +49,10 @@ export default function ChapterOverviewScreen() {
   ];
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+    >
       <Text style={styles.heading}>{chapterName.toUpperCase()}</Text>
 
       {sections.map((section) => (
@@ -62,7 +64,7 @@ export default function ChapterOverviewScreen() {
               navigation.navigate("Formula", {
                 chapterId,
                 chapterName,
-                subject: "math" as any,
+                subject: "math",
               });
             }
 
@@ -85,7 +87,7 @@ export default function ChapterOverviewScreen() {
           <Text style={styles.cardText}>{section.title}</Text>
         </TouchableOpacity>
       ))}
-    </View>
+    </ScrollView>
   );
 }
 
@@ -93,9 +95,9 @@ export default function ChapterOverviewScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingTop: 40,
     paddingHorizontal: 20,
+    paddingBottom: 40,
     backgroundColor: JiguuColors.background,
   },
 
