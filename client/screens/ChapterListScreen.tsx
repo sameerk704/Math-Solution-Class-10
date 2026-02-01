@@ -1,3 +1,9 @@
+// src/screens/ChapterListScreen.tsx
+// --------------------------------------------------
+// Shows all Class 10 chapters.
+// On click → goes to ChapterOverview screen.
+// --------------------------------------------------
+
 import React, { memo, useCallback } from "react";
 import { StyleSheet, FlatList, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -5,14 +11,16 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { ChapterCard } from "@/components/ChapterCard";
-import { EmptyState } from "@/components/EmptyState";
-import { JiguuColors, Spacing } from "@/constants/theme";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { getClass10AllChapters, Chapter } from "@/data/formulas";
+import { Spacing } from "@/constants/theme";
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type NavigationProp =
+  NativeStackNavigationProp<RootStackParamList>;
 
-const Separator = memo(() => <View style={styles.separator} />);
+const Separator = () => (
+  <View style={styles.separator} />
+);
 
 function ChapterListScreen() {
   const navigation = useNavigation<NavigationProp>();
@@ -22,15 +30,12 @@ function ChapterListScreen() {
   const renderItem = useCallback(
     ({ item }: { item: Chapter }) => (
       <ChapterCard
-        testID={`chapter-card-${item.id}`}
         number={item.number}
         name={item.name}
-        color={JiguuColors.algebra}
         onPress={() =>
           navigation.navigate("ChapterOverview", {
             chapterId: item.id,
             chapterName: item.name,
-            subject: item.subject,
           })
         }
       />
@@ -39,23 +44,13 @@ function ChapterListScreen() {
   );
 
   return (
-    <ScreenWrapper showBackButton>
+    <ScreenWrapper>
       <FlatList
         data={chapters}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={[
-          styles.listContent,
-          chapters.length === 0 ? styles.emptyContent : null,
-        ]}
-        showsVerticalScrollIndicator={false}
         ItemSeparatorComponent={Separator}
-        ListEmptyComponent={
-          <EmptyState
-            title="No Chapters Found"
-            message="Chapters will be added soon."
-          />
-        }
+        contentContainerStyle={styles.list}
       />
     </ScreenWrapper>
   );
@@ -64,14 +59,10 @@ function ChapterListScreen() {
 export default memo(ChapterListScreen);
 
 const styles = StyleSheet.create({
-  listContent: {
+  list: {
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.lg,
     paddingBottom: 120,
-  },
-  emptyContent: {
-    flex: 1,
-    justifyContent: "center",
   },
   separator: {
     height: Spacing.md,
