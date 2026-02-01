@@ -17,8 +17,12 @@ const Separator = memo(() => <View style={styles.separator} />);
 
 function FormulaScreen() {
   const route = useRoute<FormulaRouteProp>();
-  const { chapterId, chapterName, subject } = route.params;
 
+const {
+  chapterId = "",
+  chapterName = "",
+  subject = "algebra",
+} = route.params ?? {};
   const formulas = getFormulasForChapter(chapterId);
 
   const renderItem = useCallback(
