@@ -2,7 +2,7 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
  
 import { JiguuColors } from "@/constants/theme";
-import ChapterOverviewScreen from "@/screens/ ChapterOverviewScreen";
+import ChapterOverviewScreen from "@/screens/ChapterOverviewScreen";
 import HomeScreen from "@/screens/HomeScreen";
 import SubjectScreen from "@/screens/SubjectScreen";
 import ChapterListScreen from "@/screens/ChapterListScreen";
