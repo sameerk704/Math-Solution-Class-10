@@ -39,7 +39,7 @@ function FormulaScreen() {
     () => (
       <EmptyState
         title="No Formulas Yet"
-        message={Formulas for "${chapterName}" will be added soon.}
+        message={`Formulas for "${chapterName}" will be added soon.`}
       />
     ),
     [chapterName]
