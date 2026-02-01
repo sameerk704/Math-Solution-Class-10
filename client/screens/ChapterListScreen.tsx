@@ -1,41 +1,61 @@
-export type Exercise = {
-  number: number;
-};
+import React from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
-export type Chapter = {
-  id: string;
-  title: string;
-  exercises: Exercise[];
-};
+import { chaptersContent } from "../data/chaptersContent";
 
-export const chaptersContent: Chapter[] = [
-  {
-    id: "real-numbers",
-    title: "Real Numbers",
-    exercises: [{ number: 1 }, { number: 2 }],
+export default function ChapterListScreen() {
+  const navigation = useNavigation<any>();
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={chaptersContent}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.chapterCard}
+            onPress={() =>
+              navigation.navigate("ChapterOverview", {
+                chapter: item,
+              })
+            }
+          >
+            <Text style={styles.chapterTitle}>{item.title}</Text>
+          </TouchableOpacity>
+        )}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
   },
 
-  {
-    id: "polynomials",
-    title: "Polynomials",
-    exercises: [{ number: 1 }, { number: 2 }, { number: 3 }],
+  list: {
+    padding: 20,
   },
 
-  {
-    id: "pair-linear",
-    title: "Pair of Linear Equations",
-    exercises: [{ number: 1 }, { number: 2 }],
+  chapterCard: {
+    backgroundColor: "#232842",
+    padding: 18,
+    borderRadius: 14,
+    marginBottom: 14,
   },
 
-  {
-    id: "quadratic",
-    title: "Quadratic Equations",
-    exercises: [{ number: 1 }, { number: 2 }],
+  chapterTitle: {
+    color: "#fff",
+    fontSize: 18,
+    textAlign: "center",
+    fontWeight: "600",
   },
-
-  {
-    id: "arithmetic",
-    title: "Arithmetic Progressions",
-    exercises: [{ number: 1 }, { number: 2 }],
-  },
-];
+});
