@@ -1,99 +1,98 @@
-// src/screens/MCQScreen.tsx
-// --------------------------------------------------
-// MCQ SCREEN
-//
-// Purpose:
+[4:10 am, 2/2/2026] sameer khan: // src/screens/MCQScreen.tsx
+// -----------------------------------------------------------------------------
 // Displays MCQs for selected chapter.
-//
-// Safety:
-// - mcqs is always an array.
-// - Empty state handled gracefully.
-// - No "length of undefined" crashes.
-//
-// --------------------------------------------------
+// Uses chaptersContent.ts as offline source.
+// -----------------------------------------------------------------------------
 
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
+
+import { ScreenWrapper } from "@/components/ScreenWrapper";
+import { ThemedText } from "@/components/ThemedText";
 
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { getChapterContent } from "@/data/chaptersContent";
-import { JiguuColors } from "@/constants/theme";
 
-type RouteProps = RouteProp<RootStackParamList, "MCQs">;
+import { JiguuColors, Spacing, Typography } from "@/constants/theme";
 
-export default function MCQScreen() {
-  const route = useRoute<RouteProps>();
-  const { chapterId, chapterName } = route.params;
+type RouteProps = RouteProp<RootS…
+[4:10 am, 2/2/2026] sameer khan: // src/navigation/RootStackNavigator.tsx
+// -----------------------------------------------------------------------------
+// ROOT STACK NAVIGATION CONFIG
+//
+// Defines ALL application routes and their params.
+// Must stay aligned with screen navigation calls.
+// -----------------------------------------------------------------------------
 
-  const chapter = getChapterContent(chapterId);
+import React from "react";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-  const mcqs = chapter.mcqs;
+import HomeScreen from "@/screens/HomeScreen";
+import ChapterListScreen from "@/screens/ChapterListScreen";
+import ChapterOverviewScreen from "@/screens/ChapterOverviewScreen";
 
+import IntroScreen from "@/screens/IntroScreen";
+import KeyPointsScreen from "@/screens/KeyPointsScreen";
+import MCQScreen from "@/screens/MCQScreen";
+
+import QuickNotesScreen from "@/screens/QuickNotesScreen";
+import NewsEventsScreen from "@/screens/NewsEventsScreen";
+import AboutEducatorScreen from "@/screens/AboutEducatorScreen";
+
+export type RootStackParamList = {
+  Home: undefined;
+
+  ChapterList: undefined;
+
+  ChapterOverview: {
+    chapterId: string;
+    chapterName: string;
+  };
+
+  Intro: {
+    chapterId: string;
+    chapterName: string;
+  };
+
+  KeyPoints: {
+    chapterId: string;
+    chapterName: string;
+  };
+
+  MCQs: {
+    chapterId: string;
+    chapterName: string;
+  };
+
+  Exercise: {
+    chapterId: string;
+    chapterName: string;
+    exerciseNumber: number;
+  };
+
+  QuickNotes: undefined;
+  NewsEvents: undefined;
+  AboutEducator: undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+export default function RootStackNavigator() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>{chapterName}</Text>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Home" component={HomeScreen} />
 
-      {mcqs.length === 0 && (
-        <Text style={styles.emptyText}>No MCQs added yet.</Text>
-      )}
+      <Stack.Screen name="ChapterList" component={ChapterListScreen} />
+      <Stack.Screen name="ChapterOverview" component={ChapterOverviewScreen} />
 
-      {mcqs.map((mcq) => (
-        <View key={mcq.id} style={styles.card}>
-          <Text style={styles.question}>{mcq.question}</Text>
+      <Stack.Screen name="Intro" component={IntroScreen} />
+      <Stack.Screen name="KeyPoints" component={KeyPointsScreen} />
+      <Stack.Screen name="MCQs" component={MCQScreen} />
 
-          {mcq.options.map((opt, idx) => (
-            <Text key={idx} style={styles.option}>
-              {idx + 1}. {opt}
-            </Text>
-          ))}
-        </View>
-      ))}
-    </View>
+      <Stack.Screen name="QuickNotes" component={QuickNotesScreen} />
+      <Stack.Screen name="NewsEvents" component={NewsEventsScreen} />
+      <Stack.Screen name="AboutEducator" component={AboutEducatorScreen} />
+    </Stack.Navigator>
   );
 }
-
-// --------------------------------------------------
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: JiguuColors.background,
-    padding: 20,
-  },
-
-  heading: {
-    fontSize: 24,
-    textAlign: "center",
-    marginBottom: 20,
-    color: JiguuColors.textPrimary,
-    fontWeight: "700",
-  },
-
-  emptyText: {
-    textAlign: "center",
-    marginTop: 40,
-    color: JiguuColors.textSecondary,
-    fontSize: 16,
-  },
-
-  card: {
-    backgroundColor: JiguuColors.surface,
-    padding: 16,
-    borderRadius: 14,
-    marginBottom: 16,
-  },
-
-  question: {
-    color: JiguuColors.textPrimary,
-    fontSize: 17,
-    fontWeight: "600",
-    marginBottom: 10,
-  },
-
-  option: {
-    color: JiguuColors.textSecondary,
-    fontSize: 15,
-    marginBottom: 4,
-  },
-});
