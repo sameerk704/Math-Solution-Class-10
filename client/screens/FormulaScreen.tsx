@@ -1,3 +1,5 @@
+
+console.log("FORMULA PARAMS...", route.params) ;
 import React, { memo, useCallback } from "react";
 import { StyleSheet, FlatList, View } from "react-native";
 import { useRoute, RouteProp } from "@react-navigation/native";
