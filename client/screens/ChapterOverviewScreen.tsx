@@ -2,28 +2,18 @@
 --------------------------------------------------
 ChapterOverviewScreen.tsx
 
-Purpose:
-Shows chapter title and list of section buttons:
-- Introduction
-- Key Points
-- MCQs
-- Exercise 1/2/3...
+Shows section buttons for a chapter:
+Intro / Key Points / MCQs / Exercises.
 
-Uses offline data from:
+Data source:
 src/data/chaptersContent.ts
 
-Navigates to:
-- IntroScreen
-- KeyPointsScreen
-- MCQScreen
-- ExerciseHubScreen
-
-Header/Footer already global — this file only renders BODY.
+Safe-guarded against undefined data.
 
 --------------------------------------------------
 */
 
-import React, { useMemo } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -43,32 +33,29 @@ type Props = NativeStackScreenProps<
   "ChapterOverview"
 >;
 
-export default function ChapterOverviewScreen({
-  route,
-  navigation,
-}: Props) {
+export default function ChapterOverviewScreen({ route, navigation }: Props) {
   const { chapterId, chapterName } = route.params;
 
-  const chapterContent = useMemo(
-    () => getChapterContent(chapterId),
-    [chapterId]
-  );
+  const chapterContent = getChapterContent(chapterId);
 
-  const handlePress = (type: string, exerciseNumber?: number) => {
+  const sections = chapterContent?.sections ?? [];
+
+  const handlePress = (
+    type: string,
+    exerciseNumber?: number
+  ) => {
     if (type === "introduction") {
-      navigation.navigate("Formula", {
+      navigation.navigate("Intro", {
         chapterId,
         chapterName,
-        subject: "math",
       });
       return;
     }
 
     if (type === "keypoints") {
-      navigation.navigate("Formula", {
+      navigation.navigate("KeyPoints", {
         chapterId,
         chapterName,
-        subject: "math",
       });
       return;
     }
@@ -97,7 +84,7 @@ export default function ChapterOverviewScreen({
     >
       <Text style={styles.chapterTitle}>{chapterName}</Text>
 
-      {chapterContent.sections.map((section) => (
+      {sections.map((section) => (
         <TouchableOpacity
           key={section.id}
           style={styles.button}
@@ -108,6 +95,12 @@ export default function ChapterOverviewScreen({
           <Text style={styles.buttonText}>{section.title}</Text>
         </TouchableOpacity>
       ))}
+
+      {sections.length === 0 && (
+        <Text style={styles.emptyText}>
+          No sections found for this chapter.
+        </Text>
+      )}
     </ScrollView>
   );
 }
@@ -138,6 +131,11 @@ const styles = StyleSheet.create({
     color: JiguuColors.textPrimary,
     fontSize: 18,
     fontWeight: "600",
-    letterSpacing: 0.5,
+  },
+
+  emptyText: {
+    color: "#888",
+    textAlign: "center",
+    marginTop: 40,
   },
 });
