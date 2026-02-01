@@ -1,40 +1,92 @@
-// src/screens/KeyPointsScreen.tsx
-// --------------------------------------------------
-// KEY POINTS SCREEN
-// --------------------------------------------------
-// Shows key points for selected chapter.
-// Placeholder for now.
-// --------------------------------------------------
+/**
+ * FILE: src/screens/KeyPointsScreen.tsx
+ * --------------------------------------------------
+ * PURPOSE:
+ * Displays the KEY POINTS section of a selected chapter.
+ *
+ * - Receives chapterId + chapterName from navigation
+ * - Reads offline content from chaptersContent.ts
+ * - Shows placeholder text for now (later real content)
+ * - Uses same UI structure as IntroScreen
+ * - Scrollable safe layout
+ * --------------------------------------------------
+ */
 
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import React, { memo } from "react";
+import { StyleSheet, View, ScrollView } from "react-native";
+import { RouteProp, useRoute } from "@react-navigation/native";
 
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { ThemedText } from "@/components/ThemedText";
-import { Spacing, Typography } from "@/constants/theme";
+import { JiguuColors, Spacing, Typography } from "@/constants/theme";
+import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
-export default function KeyPointsScreen() {
-  const route = useRoute<any>();
-  const { chapterName } = route.params;
+import { getChapterContent } from "@/data/chaptersContent";
+
+type RouteProps = RouteProp<RootStackParamList, "KeyPoints">;
+
+function KeyPointsScreen() {
+  const route = useRoute<RouteProps>();
+  const { chapterId, chapterName } = route.params;
+
+  const content = getChapterContent(chapterId);
+
+  const keyPointsSection = content.sections.find(
+    (s) => s.type === "keypoints"
+  );
 
   return (
     <ScreenWrapper showBackButton>
-      <View style={styles.container}>
+      <View style={styles.header}>
         <ThemedText style={styles.title}>{chapterName}</ThemedText>
-        <ThemedText>Key points screen coming soon…</ThemedText>
+        <ThemedText style={styles.subtitle}>KEY POINTS</ThemedText>
       </View>
+
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.card}>
+          <ThemedText style={styles.text}>
+            {keyPointsSection
+              ? "Key Points content coming soon..."
+              : "No key points found for this chapter."}
+          </ThemedText>
+        </View>
+      </ScrollView>
     </ScreenWrapper>
   );
 }
 
+export default memo(KeyPointsScreen);
+
 const styles = StyleSheet.create({
-  container: {
-    padding: Spacing.xl,
+  header: {
+    alignItems: "center",
+    marginBottom: Spacing.lg,
   },
+
   title: {
     ...Typography.h3,
-    marginBottom: Spacing.lg,
-    textAlign: "center",
+    fontWeight: "700",
+  },
+
+  subtitle: {
+    marginTop: 6,
+    ...Typography.body,
+    opacity: 0.7,
+  },
+
+  container: {
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: 120,
+  },
+
+  card: {
+    backgroundColor: JiguuColors.surface,
+    padding: Spacing.lg,
+    borderRadius: 16,
+  },
+
+  text: {
+    ...Typography.body,
+    lineHeight: 22,
   },
 });
