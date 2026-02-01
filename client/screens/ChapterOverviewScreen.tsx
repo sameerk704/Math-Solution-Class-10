@@ -1,126 +1,143 @@
-// src/screens/ChapterOverviewScreen.tsx
-// --------------------------------------------------
-// CHAPTER OVERVIEW SCREEN
-//
-// Purpose:
-// Shows list of sections for selected chapter:
-//
-// - INTRODUCTION
-// - KEY POINTS
-// - MCQs
-// - EXERCISE 1, 2, 3...
-//
-// Exercise buttons navigate to ExerciseHubScreen
-// with chapterId, chapterName and exerciseNumber.
-//
-// Header & Footer are handled globally by ScreenWrapper.
-// --------------------------------------------------
+/*
+--------------------------------------------------
+ChapterOverviewScreen.tsx
 
-import React, { memo } from "react";
+Purpose:
+Shows chapter title and list of section buttons:
+- Introduction
+- Key Points
+- MCQs
+- Exercise 1/2/3...
+
+Uses offline data from:
+src/data/chaptersContent.ts
+
+Navigates to:
+- IntroScreen
+- KeyPointsScreen
+- MCQScreen
+- ExerciseHubScreen
+
+Header/Footer already global — this file only renders BODY.
+
+--------------------------------------------------
+*/
+
+import React, { useMemo } from "react";
 import {
-  StyleSheet,
   View,
-  FlatList,
-  Pressable,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
 } from "react-native";
 
-import {
-  useRoute,
-  RouteProp,
-  useNavigation,
-} from "@react-navigation/native";
-
-import { ScreenWrapper } from "@/components/ScreenWrapper";
-import { ThemedText } from "@/components/ThemedText";
-import { JiguuColors, Spacing, Typography } from "@/constants/theme";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { getChapterContent } from "@/data/chaptersContent";
+import { JiguuColors } from "@/constants/theme";
 
-import {
-  getChapterContent,
-  ChapterSection,
-} from "@/data/chaptersContent";
+type Props = NativeStackScreenProps<
+  RootStackParamList,
+  "ChapterOverview"
+>;
 
-type RouteProps = RouteProp<RootStackParamList, "ChapterOverview">;
-
-function ChapterOverviewScreen() {
-  const route = useRoute<RouteProps>();
-  const navigation = useNavigation();
-
+export default function ChapterOverviewScreen({
+  route,
+  navigation,
+}: Props) {
   const { chapterId, chapterName } = route.params;
 
-  const content = getChapterContent(chapterId);
+  const chapterContent = useMemo(
+    () => getChapterContent(chapterId),
+    [chapterId]
+  );
 
-  const handlePress = (item: ChapterSection) => {
-    if (item.type === "exercise") {
-      navigation.navigate(
-        "ExerciseHub" as never,
-        {
-          chapterId,
-          chapterName,
-          exerciseNumber: item.exerciseNumber,
-        } as never
-      );
+  const handlePress = (type: string, exerciseNumber?: number) => {
+    if (type === "introduction") {
+      navigation.navigate("Formula", {
+        chapterId,
+        chapterName,
+        subject: "math",
+      });
+      return;
+    }
+
+    if (type === "keypoints") {
+      navigation.navigate("Formula", {
+        chapterId,
+        chapterName,
+        subject: "math",
+      });
+      return;
+    }
+
+    if (type === "mcqs") {
+      navigation.navigate("MCQs", {
+        chapterId,
+        chapterName,
+      });
+      return;
+    }
+
+    if (type === "exercise") {
+      navigation.navigate("ExerciseHub", {
+        chapterId,
+        chapterName,
+        exerciseNumber,
+      });
     }
   };
 
   return (
-    <ScreenWrapper showBackButton>
-      <View style={styles.header}>
-        <ThemedText style={styles.title}>
-          {chapterName}
-        </ThemedText>
-      </View>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+    >
+      <Text style={styles.chapterTitle}>{chapterName}</Text>
 
-      <FlatList
-        data={content.sections}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        renderItem={({ item }) => (
-          <Pressable
-            style={styles.sectionCard}
-            onPress={() => handlePress(item)}
-          >
-            <ThemedText style={styles.sectionTitle}>
-              {item.title}
-            </ThemedText>
-          </Pressable>
-        )}
-      />
-    </ScreenWrapper>
+      {chapterContent.sections.map((section) => (
+        <TouchableOpacity
+          key={section.id}
+          style={styles.button}
+          onPress={() =>
+            handlePress(section.type, section.exerciseNumber)
+          }
+        >
+          <Text style={styles.buttonText}>{section.title}</Text>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
   );
 }
 
-export default memo(ChapterOverviewScreen);
-
 const styles = StyleSheet.create({
-  header: {
-    alignItems: "center",
-    marginBottom: Spacing.xl,
+  container: {
+    paddingTop: 40,
+    paddingHorizontal: 20,
   },
 
-  title: {
-    ...Typography.h3,
+  chapterTitle: {
+    fontSize: 26,
     fontWeight: "700",
+    color: JiguuColors.textPrimary,
     textAlign: "center",
+    marginBottom: 30,
   },
 
-  list: {
-    paddingHorizontal: Spacing.xl,
-    paddingBottom: 140,
-  },
-
-  sectionCard: {
-    backgroundColor: JiguuColors.surface,
-    paddingVertical: Spacing.lg,
-    paddingHorizontal: Spacing.lg,
+  button: {
+    backgroundColor: JiguuColors.card,
     borderRadius: 18,
-    marginBottom: Spacing.md,
+    paddingVertical: 18,
+    marginBottom: 14,
+    alignItems: "center",
   },
 
-  sectionTitle: {
-    ...Typography.body,
+  buttonText: {
+    color: JiguuColors.textPrimary,
+    fontSize: 18,
     fontWeight: "600",
-    textAlign: "center",
+    letterSpacing: 0.5,
   },
 });
