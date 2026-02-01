@@ -1,41 +1,63 @@
 // src/screens/IntroScreen.tsx
-// --------------------------------------------------
-// INTRO SCREEN
-// --------------------------------------------------
-// Shows Introduction content for selected chapter.
-// Receives chapterId + chapterName from navigation.
-// Currently placeholder screen.
-// --------------------------------------------------
+// ------------------------------------------------------------------
+// Displays INTRODUCTION content for a selected chapter.
+// Reads offline chapter data from chaptersContent.ts
+// using chapterId passed via navigation params.
+// ------------------------------------------------------------------
 
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import React, { memo } from "react";
+import { StyleSheet, ScrollView, View } from "react-native";
+import { RouteProp, useRoute } from "@react-navigation/native";
 
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { ThemedText } from "@/components/ThemedText";
-import { Spacing, Typography } from "@/constants/theme";
+import { JiguuColors, Spacing, Typography } from "@/constants/theme";
 
-export default function IntroScreen() {
-  const route = useRoute<any>();
-  const { chapterName } = route.params;
+import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { getChapterContent } from "@/data/chaptersContent";
+
+type RouteProps = RouteProp<RootStackParamList, "Intro">;
+
+function IntroScreen() {
+  const route = useRoute<RouteProps>();
+  const { chapterId, chapterName } = route.params;
+
+  const content = getChapterContent(chapterId);
 
   return (
     <ScreenWrapper showBackButton>
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <ThemedText style={styles.title}>{chapterName}</ThemedText>
-        <ThemedText>Introduction screen coming soon…</ThemedText>
-      </View>
+
+        <View style={styles.card}>
+          <ThemedText style={styles.text}>
+            {content.introductionText}
+          </ThemedText>
+        </View>
+      </ScrollView>
     </ScreenWrapper>
   );
 }
 
+export default memo(IntroScreen);
+
 const styles = StyleSheet.create({
   container: {
-    padding: Spacing.xl,
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: 120,
   },
   title: {
     ...Typography.h3,
-    marginBottom: Spacing.lg,
     textAlign: "center",
+    marginBottom: Spacing.lg,
+  },
+  card: {
+    backgroundColor: JiguuColors.surface,
+    padding: Spacing.lg,
+    borderRadius: 16,
+  },
+  text: {
+    ...Typography.body,
+    lineHeight: 22,
   },
 });
