@@ -2,7 +2,7 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
  
 import { JiguuColors } from "@/constants/theme";
-import ChapterOverViewScreen from "@/screens/ ChapterOverViewScreen";
+import ChapterOverviewScreen from "@/screens/ ChapterOverviewScreen";
 import HomeScreen from "@/screens/HomeScreen";
 import SubjectScreen from "@/screens/SubjectScreen";
 import ChapterListScreen from "@/screens/ChapterListScreen";
@@ -49,7 +49,7 @@ export default function RootStackNavigator() {
       <Stack.Screen name="AboutEducator" component={AboutEducatorScreen} />
       <Stack.Screen name="QuickNotes" component={QuickNotesScreen} />
       <Stack.Screen name="AllChapters" component={ChapterListScreen} />
-      <Stack.Screen name="ChapterOverView" component={ChapterOverViewScreen} />
+      <Stack.Screen name="ChapterOverview" component={ChapterOverviewScreen} />
     </Stack.Navigator>
   );
 }
