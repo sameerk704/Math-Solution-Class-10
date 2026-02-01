@@ -1,105 +1,73 @@
 import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
-import { RootStackParamList } from "@/navigation/RootStackNavigator";
-import { ScreenWrapper } from "@/components/ScreenWrapper";
-import { ColorButton } from "@/components/ColorButton";
-import { ThemedText } from "@/components/ThemedText";
-
-import { getChapterContent } from "@/data/chaptersContent";
-
-type NavProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function ChapterOverviewScreen() {
-  const navigation = useNavigation<NavProp>();
   const route = useRoute<any>();
+  const navigation = useNavigation<any>();
 
-  const { chapterId, chapterName } = route.params;
+  const chapter = route.params?.chapter;
 
-  const content = getChapterContent(chapterId);
+  if (!chapter) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.error}>Chapter data missing.</Text>
+      </View>
+    );
+  }
+
+  const sections = [
+    { id: "intro", title: "Introduction", screen: "IntroductionScreen" },
+    { id: "keypoints", title: "Key Points", screen: "KeyPointsScreen" },
+    { id: "mcqs", title: "MCQs", screen: "MCQScreen" },
+    { id: "ex1", title: "Exercise 1", screen: "ExerciseScreen", number: 1 },
+    { id: "ex2", title: "Exercise 2", screen: "ExerciseScreen", number: 2 },
+    { id: "ex3", title: "Exercise 3", screen: "ExerciseScreen", number: 3 },
+  ];
 
   return (
-    <ScreenWrapper showBackButton>
-      <View style={styles.header}>
-        <ThemedText style={styles.title}>
-          {chapterName}
-        </ThemedText>
-      </View>
-
-      <FlatList
-        data={content.sections}
-        keyExtractor={(i) => i.id}
-        contentContainerStyle={styles.list}
-        renderItem={({ item }) => {
-          if (item.type === "introduction")
-            return (
-              <ColorButton
-                title="INTRODUCTION"
-                color="#6366F1"
-                onPress={() =>
-                  navigation.navigate("Intro", {
-                    chapterId,
-                    chapterName,
-                  })
-                }
-              />
-            );
-
-          if (item.type === "keypoints")
-            return (
-              <ColorButton
-                title="KEY POINTS"
-                color="#10B981"
-                onPress={() =>
-                  navigation.navigate("KeyPoints", {
-                    chapterId,
-                    chapterName,
-                  })
-                }
-              />
-            );
-
-          if (item.type === "mcqs")
-            return (
-              <ColorButton
-                title="MCQs"
-                color="#F59E0B"
-                onPress={() =>
-                  navigation.navigate("MCQs", {
-                    chapterId,
-                    chapterName,
-                  })
-                }
-              />
-            );
-
-          return (
-            <ColorButton
-              title={item.title}
-              color="#EF4444"
-              onPress={() => {}}
-            />
-          );
-        }}
-      />
-    </ScreenWrapper>
+    <ScrollView contentContainerStyle={styles.container}>
+      {sections.map((item) => (
+        <TouchableOpacity
+          key={item.id}
+          style={styles.sectionBtn}
+          onPress={() =>
+            navigation.navigate(item.screen, {
+              chapterId: chapter.id,
+              exerciseNumber: item.number,
+            })
+          }
+        >
+          <Text style={styles.sectionText}>{item.title}</Text>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
+  container: {
+    padding: 24,
+  },
+  sectionBtn: {
+    backgroundColor: "#2c3147",
+    padding: 18,
+    borderRadius: 14,
+    marginBottom: 16,
+  },
+  sectionText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  center: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    marginBottom: 24,
   },
-  title: {
-    fontSize: 26,
-    fontWeight: "700",
-  },
-  list: {
-    paddingHorizontal: 22,
-    paddingBottom: 120,
-    gap: 14,
+  error: {
+    color: "red",
+    fontSize: 16,
   },
 });
