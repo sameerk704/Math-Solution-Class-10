@@ -34,9 +34,11 @@ function FormulaScreen() {
   const renderEmptyState = useCallback(
     () => (
       <EmptyState
-        title="No Formulas Yet"
-        message={Formulas for "${chapterName}" will be added soon.}
-      />
+  title="No Formulas Yet"
+  message={`Formulas for "${chapterName}" will be added soon.`}
+    />
+     
+    
     ),
     [chapterName]
   );
