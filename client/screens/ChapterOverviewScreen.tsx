@@ -77,7 +77,7 @@ function ChapterOverviewScreen() {
         {chapter.exercises.map((ex) => (
           <SectionButton
             key={ex.number}
-            label={EXERCISE ${ex.number}}
+            label={`EXERCISE ${ex.number}`}
             onPress={() =>
               navigation.navigate("Exercise", {
                 chapterId,
