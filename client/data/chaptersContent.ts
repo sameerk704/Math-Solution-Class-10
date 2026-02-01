@@ -1,41 +1,76 @@
+// src/data/chaptersContent.ts
+// -----------------------------------------------------------------------------
+// CENTRAL OFFLINE CHAPTER CONTENT SOURCE
+//
+// Purpose:
+// - Provides ALL offline chapter metadata.
+// - Drives ChapterList, ChapterOverview, MCQs, Exercises.
+// - Must stay in sync with formulas.ts chapter IDs.
+//
+// Every chapter MUST:
+// - use same id as formulas.ts
+// - define exercises
+// - define mcqs (even empty)
+//
+// -----------------------------------------------------------------------------
+
+export type MCQ = {
+  id: string;
+  question: string;
+  options: string[];
+  correctIndex: number;
+};
+
 export type Exercise = {
   number: number;
 };
 
-export type Chapter = {
+export type ChapterContent = {
   id: string;
   title: string;
   exercises: Exercise[];
+  mcqs: MCQ[];
 };
 
-export const chaptersContent: Chapter[] = [
+export const chaptersContent: ChapterContent[] = [
   {
     id: "real-numbers",
-    title: "Real Numbers",
-    exercises: [{ number: 1 }, { number: 2 }],
+    title: "REAL NUMBERS",
+    exercises: [{ number: 1 }, { number: 2 }, { number: 3 }],
+    mcqs: [],
   },
 
   {
     id: "polynomials",
-    title: "Polynomials",
-    exercises: [{ number: 1 }, { number: 2 }, { number: 3 }],
+    title: "POLYNOMIALS",
+    exercises: [{ number: 1 }, { number: 2 }],
+    mcqs: [],
   },
 
   {
-    id: "pair-linear",
-    title: "Pair of Linear Equations",
+    id: "pair-linear-equations",
+    title: "PAIR OF LINEAR EQUATIONS",
     exercises: [{ number: 1 }, { number: 2 }],
+    mcqs: [],
   },
 
   {
-    id: "quadratic",
-    title: "Quadratic Equations",
+    id: "quadratic-equations",
+    title: "QUADRATIC EQUATIONS",
     exercises: [{ number: 1 }, { number: 2 }],
+    mcqs: [],
   },
 
   {
-    id: "arithmetic",
-    title: "Arithmetic Progressions",
+    id: "arithmetic-progressions",
+    title: "ARITHMETIC PROGRESSIONS",
     exercises: [{ number: 1 }, { number: 2 }],
+    mcqs: [],
   },
 ];
+
+/* -------------------------------------------------------------------------- */
+
+export function getChapterContent(chapterId: string): ChapterContent | undefined {
+  return chaptersContent.find((c) => c.id === chapterId);
+}
