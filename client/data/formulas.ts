@@ -31,8 +31,8 @@ export const class10Chapters: Chapter[] = [
   { id: "triangles", number: 6, name: "TRIANGLES", subject: "geometry", classLevel: 10 },
   { id: "coordinate-geometry", number: 7, name: "COORDINATE GEOMETRY", subject: "geometry", classLevel: 10 },
 
-  { id: "intro-trigonometry", number: 8, name: "INTRODUCTION TO TRIGONOMETRY", subject: "trigonometry", classLevel: 10 },
-  { id: "applications-trigonometry", number: 9, name: "SOME APPLICATIONS OF TRIGONOMETRY", subject: "trigonometry", classLevel: 10 },
+  { id: "intro-trigonometry", number: 8, name: "TRIGONOMETRY - I", subject: "trigonometry", classLevel: 10 },
+  { id: "applications-trigonometry", number: 9, name: "TRIGONOMETRY - II", subject: "trigonometry", classLevel: 10 },
 
   { id: "circles", number: 10, name: "CIRCLES", subject: "geometry", classLevel: 10 },
   { id: "areas-circles", number: 11, name: "AREAS RELATED TO CIRCLES", subject: "geometry", classLevel: 10 },
