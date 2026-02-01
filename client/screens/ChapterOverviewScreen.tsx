@@ -1,125 +1,133 @@
-import React from "react";
+// src/screens/ChapterOverviewScreen.tsx
+// --------------------------------------------------
+// Shows buttons for selected chapter:
+//
+// INTRODUCTION
+// KEY POINTS
+// MCQs
+// EXERCISE 1..N
+//
+// All chapters always land here first.
+// --------------------------------------------------
+
+import React, { memo } from "react";
+import { StyleSheet, View, FlatList } from "react-native";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+  useRoute,
+  RouteProp,
+  useNavigation,
+} from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
+import { ScreenWrapper } from "@/components/ScreenWrapper";
+import { ColorButton } from "@/components/ColorButton";
+import { ThemedText } from "@/components/ThemedText";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { Spacing, Typography } from "@/constants/theme";
 import { getChapterContent } from "@/data/chaptersContent";
-import { JiguuColors } from "@/constants/theme";
 
-type RouteProps = RouteProp<RootStackParamList, "ChapterOverview">;
+type RouteProps = RouteProp<
+  RootStackParamList,
+  "ChapterOverview"
+>;
 
-export default function ChapterOverviewScreen() {
-  const navigation = useNavigation<any>();
+type NavigationProp =
+  NativeStackNavigationProp<RootStackParamList>;
+
+function ChapterOverviewScreen() {
   const route = useRoute<RouteProps>();
+  const navigation = useNavigation<NavigationProp>();
 
   const { chapterId, chapterName } = route.params;
 
-  const chapter = getChapterContent(chapterId);
-
-  const sections = [
-    {
-      id: "intro",
-      title: "Introduction",
-      type: "intro",
-    },
-    {
-      id: "keypoints",
-      title: "Key Points",
-      type: "keypoints",
-    },
-    {
-      id: "mcqs",
-      title: "MCQs",
-      type: "mcqs",
-    },
-
-    // ---- Exercises dynamic ----
-    ...chapter.exercises.map((ex) => ({
-      id: `exercise-${ex.number}`,
-      title: `Exercise ${ex.number}`,
-      type: "exercise",
-      number: ex.number,
-    })),
-  ];
+  const content = getChapterContent(chapterId);
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-    >
-      <Text style={styles.heading}>{chapterName.toUpperCase()}</Text>
+    <ScreenWrapper showBackButton>
+      <View style={styles.header}>
+        <ThemedText style={styles.title}>
+          {chapterName}
+        </ThemedText>
+      </View>
 
-      {sections.map((section) => (
-        <TouchableOpacity
-          key={section.id}
-          style={styles.card}
-          onPress={() => {
-            if (section.type === "intro") {
-              navigation.navigate("Formula", {
-                chapterId,
-                chapterName,
-                subject: "math",
-              });
-            }
+      <FlatList
+        data={content.sections}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
+        renderItem={({ item }) => {
+          if (item.type === "introduction") {
+            return (
+              <ColorButton
+                title="INTRODUCTION"
+                color="#6366F1"
+                onPress={() =>
+                  navigation.navigate("Intro", {
+                    chapterId,
+                    chapterName,
+                  })
+                }
+              />
+            );
+          }
 
-            if (section.type === "keypoints") {
-              navigation.navigate("QuickNotes");
-            }
+          if (item.type === "keypoints") {
+            return (
+              <ColorButton
+                title="KEY POINTS"
+                color="#10B981"
+                onPress={() =>
+                  navigation.navigate("KeyPoints", {
+                    chapterId,
+                    chapterName,
+                  })
+                }
+              />
+            );
+          }
 
-            if (section.type === "mcqs") {
-              navigation.navigate("MCQs", {
-                chapterId,
-                chapterName,
-              });
-            }
+          if (item.type === "mcqs") {
+            return (
+              <ColorButton
+                title="MCQs"
+                color="#F59E0B"
+                onPress={() =>
+                  navigation.navigate("MCQs", {
+                    chapterId,
+                    chapterName,
+                  })
+                }
+              />
+            );
+          }
 
-            if (section.type === "exercise") {
-              navigation.navigate("QuickNotes");
-            }
-          }}
-        >
-          <Text style={styles.cardText}>{section.title}</Text>
-        </TouchableOpacity>
-      ))}
-    </ScrollView>
+          return (
+            <ColorButton
+              title={item.title}
+              color="#EF4444"
+              onPress={() => {}}
+            />
+          );
+        }}
+      />
+    </ScreenWrapper>
   );
 }
 
-// --------------------------------------------------
+export default memo(ChapterOverviewScreen);
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 40,
-    paddingHorizontal: 20,
-    paddingBottom: 40,
-    backgroundColor: JiguuColors.background,
+  header: {
+    alignItems: "center",
+    marginBottom: Spacing.lg,
   },
-
-  heading: {
-    fontSize: 26,
-    color: JiguuColors.textPrimary,
-    textAlign: "center",
-    marginBottom: 40,
+  title: {
+    ...Typography.h3,
     fontWeight: "700",
-  },
-
-  card: {
-    backgroundColor: JiguuColors.surface,
-    paddingVertical: 18,
-    borderRadius: 18,
-    marginBottom: 18,
-  },
-
-  cardText: {
-    color: JiguuColors.textPrimary,
     textAlign: "center",
-    fontSize: 18,
-    fontWeight: "600",
+  },
+  list: {
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: 120,
+    gap: Spacing.md,
   },
 });
