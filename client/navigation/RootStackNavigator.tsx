@@ -1,3 +1,11 @@
+// src/navigation/RootStackNavigator.tsx
+// -----------------------------------------------------------------------------
+// ROOT STACK NAVIGATION CONFIG
+//
+// Defines ALL application routes and their params.
+// Must stay aligned with screen navigation calls.
+// -----------------------------------------------------------------------------
+
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -38,6 +46,12 @@ export type RootStackParamList = {
     chapterName: string;
   };
 
+  Exercise: {
+    chapterId: string;
+    chapterName: string;
+    exerciseNumber: number;
+  };
+
   QuickNotes: undefined;
   NewsEvents: undefined;
   AboutEducator: undefined;
@@ -51,10 +65,7 @@ export default function RootStackNavigator() {
       <Stack.Screen name="Home" component={HomeScreen} />
 
       <Stack.Screen name="ChapterList" component={ChapterListScreen} />
-      <Stack.Screen
-        name="ChapterOverview"
-        component={ChapterOverviewScreen}
-      />
+      <Stack.Screen name="ChapterOverview" component={ChapterOverviewScreen} />
 
       <Stack.Screen name="Intro" component={IntroScreen} />
       <Stack.Screen name="KeyPoints" component={KeyPointsScreen} />
@@ -62,10 +73,7 @@ export default function RootStackNavigator() {
 
       <Stack.Screen name="QuickNotes" component={QuickNotesScreen} />
       <Stack.Screen name="NewsEvents" component={NewsEventsScreen} />
-      <Stack.Screen
-        name="AboutEducator"
-        component={AboutEducatorScreen}
-      />
+      <Stack.Screen name="AboutEducator" component={AboutEducatorScreen} />
     </Stack.Navigator>
   );
 }
