@@ -88,7 +88,7 @@ export type RootStackParamList = {
   AboutEducator: undefined;
   QuickNotes: undefined;
 
-   ExerciseHub: {       /* ye add kiya mene*/
+   ExerciseHub: {      
   chapterId: string;
   chapterName: string;
   exerciseNumber: number;
@@ -141,7 +141,7 @@ export default function RootStackNavigator() {
 
       <Stack.Screen name="QuickNotes" component={QuickNotesScreen} />
 
-       <Stack.Screen  name="ExerciseHub" component={ExerciseHubScreen} />        /* Last me add kiya */
+       <Stack.Screen  name="ExerciseHub" component={ExerciseHubScreen} />       
     
     </Stack.Navigator>
   );
