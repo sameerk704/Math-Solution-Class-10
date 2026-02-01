@@ -1,14 +1,18 @@
 // src/data/chaptersContent.ts
-// ------------------------------------------------------------------
-// Central OFFLINE content store for ALL chapter sections.
-// This file provides:
-//  • Introduction text
-//  • Key Points
-//  • MCQs
-//  • Exercises
-// Content is mapped by chapterId and section type.
-// No backend is used — everything is local & scalable.
-// ------------------------------------------------------------------
+// --------------------------------------------------
+// OFFLINE DATA SOURCE for all chapter sections.
+// Stores:
+//  - Introduction text
+//  - Key Points
+//  - MCQs
+//  - Exercise numbers
+//
+// Every screen (Intro / KeyPoints / MCQs / Exercises)
+// reads from this file.
+//
+// NO backend dependency.
+// Fully scalable for future content injection.
+// --------------------------------------------------
 
 export type ChapterSectionType =
   | "introduction"
@@ -16,65 +20,131 @@ export type ChapterSectionType =
   | "mcqs"
   | "exercise";
 
-export interface ChapterSection {
+/* --------------------------------------------------
+   MCQ STRUCTURE
+-------------------------------------------------- */
+
+export interface MCQ {
   id: string;
-  title: string;
-  type: ChapterSectionType;
-  exerciseNumber?: number;
+  question: string;
+  options: string[];
+  answerIndex: number;
 }
+
+/* --------------------------------------------------
+   CHAPTER CONTENT STRUCTURE
+-------------------------------------------------- */
 
 export interface ChapterContent {
   chapterId: string;
-  sections: ChapterSection[];
-  introductionText: string;
+
+  introduction: string;
+
+  keyPoints: string[];
+
+  mcqs: MCQ[];
+
+  exercises: number[];
 }
 
-/* ------------------------------------------------------------------
-   DEFAULT SECTIONS SHOWN ON OVERVIEW SCREEN
------------------------------------------------------------------- */
+/* --------------------------------------------------
+   DEFAULT FALLBACK (for chapters not yet added)
+-------------------------------------------------- */
 
-function buildDefaultSections(): ChapterSection[] {
-  return [
-    { id: "intro", title: "INTRODUCTION", type: "introduction" },
-    { id: "keypoints", title: "KEY POINTS", type: "keypoints" },
-    { id: "mcqs", title: "MCQs", type: "mcqs" },
-    { id: "ex-1", title: "EXERCISE 1", type: "exercise", exerciseNumber: 1 },
-    { id: "ex-2", title: "EXERCISE 2", type: "exercise", exerciseNumber: 2 },
-    { id: "ex-3", title: "EXERCISE 3", type: "exercise", exerciseNumber: 3 },
-  ];
-}
-
-/* ------------------------------------------------------------------
-   INTRO CONTENT MAP (REAL OFFLINE TEXT)
------------------------------------------------------------------- */
-
-const introContentByChapter: Record<string, string> = {
-  "real-numbers":
-    "Real Numbers include all rational and irrational numbers. In this chapter we study Euclid’s Division Lemma, Fundamental Theorem of Arithmetic and properties of numbers.",
-
-  polynomials:
-    "This chapter introduces polynomials, their degrees, zeroes and the relation between zeroes and coefficients.",
-
-  triangles:
-    "Triangles are three-sided polygons. In this chapter we explore similarity of triangles, Pythagoras theorem and their applications.",
-
-  probability:
-    "Probability deals with the chance of occurrence of events. This chapter explains experimental probability and basic concepts.",
-
-  DEFAULT:
-    "Introduction content for this chapter will be added soon.",
-};
-
-/* ------------------------------------------------------------------
-   PUBLIC HELPERS
------------------------------------------------------------------- */
-
-export function getChapterContent(chapterId: string): ChapterContent {
+function buildDefaultChapter(chapterId: string): ChapterContent {
   return {
     chapterId,
-    sections: buildDefaultSections(),
-    introductionText:
-      introContentByChapter[chapterId] ??
-      introContentByChapter.DEFAULT,
+
+    introduction:
+      "Introduction content will be added here for this chapter.",
+
+    keyPoints: [
+      "Key points will be added later.",
+      "Important definitions will appear here.",
+    ],
+
+    mcqs: [
+      {
+        id: "mcq-1",
+        question: "Sample MCQ question for this chapter?",
+        options: ["Option A", "Option B", "Option C", "Option D"],
+        answerIndex: 0,
+      },
+    ],
+
+    exercises: [1, 2, 3],
   };
+}
+
+/* --------------------------------------------------
+   CHAPTER MAP (Add real data here later)
+-------------------------------------------------- */
+
+const chapterContentMap: Record<string, ChapterContent> = {
+  "real-numbers": {
+    chapterId: "real-numbers",
+
+    introduction:
+      "Real numbers include rational and irrational numbers. Euclid’s Division Lemma is an important concept.",
+
+    keyPoints: [
+      "Euclid Division Lemma: a = bq + r",
+      "Fundamental Theorem of Arithmetic",
+    ],
+
+    mcqs: [
+      {
+        id: "rn-1",
+        question: "What is Euclid’s Division Lemma?",
+        options: [
+          "a = bq + r",
+          "a = b + q + r",
+          "a = br + q",
+          "a = qb + r",
+        ],
+        answerIndex: 0,
+      },
+    ],
+
+    exercises: [1, 2, 3],
+  },
+
+  triangles: {
+    chapterId: "triangles",
+
+    introduction:
+      "Triangles are polygons with three sides. Pythagoras theorem is important.",
+
+    keyPoints: [
+      "Pythagoras theorem: a² + b² = c²",
+      "Two triangles are similar if...",
+    ],
+
+    mcqs: [
+      {
+        id: "tri-1",
+        question: "What does Pythagoras theorem state?",
+        options: [
+          "a² + b² = c²",
+          "a + b = c",
+          "a² + b = c",
+          "ab = c",
+        ],
+        answerIndex: 0,
+      },
+    ],
+
+    exercises: [1, 2],
+  },
+};
+
+/* --------------------------------------------------
+   PUBLIC HELPERS
+-------------------------------------------------- */
+
+export function getChapterContent(chapterId: string): ChapterContent {
+  return (
+    chapterContentMap[chapterId] ??
+    buildDefaultChapter(chapterId)
+  );
 }
