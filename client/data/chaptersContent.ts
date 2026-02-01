@@ -1,28 +1,27 @@
 // src/data/chaptersContent.ts
 // --------------------------------------------------
-// OFFLINE DATA SOURCE for all chapter sections.
-// Stores:
-//  - Introduction text
-//  - Key Points
-//  - MCQs
-//  - Exercise numbers
+// CENTRAL CHAPTER CONTENT STORE
 //
-// Every screen (Intro / KeyPoints / MCQs / Exercises)
-// reads from this file.
+// Purpose:
+// Holds all academic content for each chapter:
+// - Introduction
+// - Key Points
+// - MCQs
+// - Exercises
 //
-// NO backend dependency.
-// Fully scalable for future content injection.
+// IMPORTANT RULES:
+// 1) Every chapter MUST contain these arrays:
+//    - introduction
+//    - keyPoints
+//    - mcqs
+//    - exercises
+//
+// 2) No field should ever be undefined.
+// 3) Screens can safely map/length on these.
+//
+// This design prevents runtime crashes.
+//
 // --------------------------------------------------
-
-export type ChapterSectionType =
-  | "introduction"
-  | "keypoints"
-  | "mcqs"
-  | "exercise";
-
-/* --------------------------------------------------
-   MCQ STRUCTURE
--------------------------------------------------- */
 
 export interface MCQ {
   id: string;
@@ -31,149 +30,86 @@ export interface MCQ {
   answerIndex: number;
 }
 
-/* --------------------------------------------------
-   CHAPTER CONTENT STRUCTURE
--------------------------------------------------- */
+export interface Exercise {
+  number: number;
+  title: string;
+}
 
 export interface ChapterContent {
   chapterId: string;
-
-  introduction: string;
-
+  introduction: string[];
   keyPoints: string[];
-
   mcqs: MCQ[];
-
-  exercises: number[];
+  exercises: Exercise[];
 }
 
-/* --------------------------------------------------
-   DEFAULT FALLBACK (for chapters not yet added)
--------------------------------------------------- */
-
-function buildDefaultChapter(chapterId: string): ChapterContent {
-  return {
-    chapterId,
-    sections: [
-      {
-        id: "intro",
-        title: "Introduction",
-        type: "intro",
-        items: [
-          "Introduction content will be added here for this chapter."
-        ]
-      },
-
-      {
-        id: "keypoints",
-        title: "Key Points",
-        type: "keypoints",
-        items: [
-          "Key points will be added later.",
-          "Important definitions will appear here."
-        ]
-      },
-
-      {
-        id: "mcqs",
-        title: "MCQs",
-        type: "mcqs",
-        items: []
-      },
-
-      {
-        id: "exercise-1",
-        title: "Exercise 1",
-        type: "exercise",
-        exerciseNo: 1
-      },
-
-      {
-        id: "exercise-2",
-        title: "Exercise 2",
-        type: "exercise",
-        exerciseNo: 2
-      },
-
-      {
-        id: "exercise-3",
-        title: "Exercise 3",
-        type: "exercise",
-        exerciseNo: 3
-      }
-    ]
-  };
-}
-
-/* --------------------------------------------------
-   CHAPTER MAP (Add real data here later)
--------------------------------------------------- */
+// --------------------------------------------------
+// CHAPTER DATA MAP
+// --------------------------------------------------
 
 const chapterContentMap: Record<string, ChapterContent> = {
   "real-numbers": {
     chapterId: "real-numbers",
 
-    introduction:
-      "Real numbers include rational and irrational numbers. Euclid’s Division Lemma is an important concept.",
+    introduction: ["Introduction content will be added later."],
 
-    keyPoints: [
-      "Euclid Division Lemma: a = bq + r",
-      "Fundamental Theorem of Arithmetic",
-    ],
+    keyPoints: ["Key points will be added later."],
 
     mcqs: [
       {
         id: "rn-1",
-        question: "What is Euclid’s Division Lemma?",
-        options: [
-          "a = bq + r",
-          "a = b + q + r",
-          "a = br + q",
-          "a = qb + r",
-        ],
-        answerIndex: 0,
+        question: "Which of the following is an irrational number?",
+        options: ["2", "4", "√2", "6"],
+        answerIndex: 2,
       },
     ],
 
-    exercises: [1, 2, 3],
+    exercises: [
+      { number: 1, title: "Euclid Division Lemma" },
+      { number: 2, title: "HCF Problems" },
+      { number: 3, title: "Decimal Expansions" },
+    ],
   },
 
-  triangles: {
-    chapterId: "triangles",
+  polynomials: {
+    chapterId: "polynomials",
 
-    introduction:
-      "Triangles are polygons with three sides. Pythagoras theorem is important.",
+    introduction: ["Introduction content will be added later."],
 
-    keyPoints: [
-      "Pythagoras theorem: a² + b² = c²",
-      "Two triangles are similar if...",
+    keyPoints: ["Important definitions will appear here."],
+
+    mcqs: [],
+
+    exercises: [
+      { number: 1, title: "Basic Polynomial Questions" },
+      { number: 2, title: "Graphs of Polynomials" },
+      { number: 3, title: "Zeros of Polynomial" },
     ],
-
-    mcqs: [
-      {
-        id: "tri-1",
-        question: "What does Pythagoras theorem state?",
-        options: [
-          "a² + b² = c²",
-          "a + b = c",
-          "a² + b = c",
-          "ab = c",
-        ],
-        answerIndex: 0,
-      },
-    ],
-
-    exercises: [1, 2],
   },
 };
 
-/* --------------------------------------------------
-   PUBLIC HELPERS
--------------------------------------------------- */
+// --------------------------------------------------
+// SAFE PUBLIC HELPER
+// --------------------------------------------------
 
 export function getChapterContent(chapterId: string): ChapterContent {
-  return (
-    chapterContentMap[chapterId] ??
-    buildDefaultChapter(chapterId)
-  );
+  const chapter = chapterContentMap[chapterId];
+
+  if (!chapter) {
+    return {
+      chapterId,
+      introduction: [],
+      keyPoints: [],
+      mcqs: [],
+      exercises: [],
+    };
+  }
+
+  return {
+    chapterId: chapter.chapterId,
+    introduction: chapter.introduction ?? [],
+    keyPoints: chapter.keyPoints ?? [],
+    mcqs: chapter.mcqs ?? [],
+    exercises: chapter.exercises ?? [],
+  };
 }
