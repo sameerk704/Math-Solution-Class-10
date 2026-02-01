@@ -19,7 +19,7 @@ export type RootStackParamList = {
   NewsEvents: undefined;
   AboutEducator: undefined;
   QuickNotes: undefined;
-  AllChapters: undifined;
+  AllChapters: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
