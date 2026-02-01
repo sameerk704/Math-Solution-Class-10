@@ -1,73 +1,143 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
-import { useRoute, useNavigation } from "@react-navigation/native";
+// src/screens/ChapterOverviewScreen.tsx
+// -----------------------------------------------------------------------------
+// HUB SCREEN after chapter selection.
+//
+// Shows:
+// - INTRODUCTION
+// - KEY POINTS
+// - MCQs
+// - Exercise buttons (dynamic)
+//
+// All navigation passes chapterId + chapterName.
+// -----------------------------------------------------------------------------
 
-export default function ChapterOverviewScreen() {
-  const route = useRoute<any>();
-  const navigation = useNavigation<any>();
+import React, { memo } from "react";
+import { StyleSheet, View, ScrollView, Pressable } from "react-native";
+import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-  const chapter = route.params?.chapter;
+import { ScreenWrapper } from "@/components/ScreenWrapper";
+import { ThemedText } from "@/components/ThemedText";
+import { JiguuColors, Spacing, Typography } from "@/constants/theme";
+
+import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { getChapterContent } from "@/data/chaptersContent";
+
+type RouteProps = RouteProp<
+  RootStackParamList,
+  "ChapterOverview"
+>;
+
+type NavProp = NativeStackNavigationProp<RootStackParamList>;
+
+function ChapterOverviewScreen() {
+  const route = useRoute<RouteProps>();
+  const navigation = useNavigation<NavProp>();
+
+  const { chapterId, chapterName } = route.params;
+
+  const chapter = getChapterContent(chapterId);
 
   if (!chapter) {
     return (
-      <View style={styles.center}>
-        <Text style={styles.error}>Chapter data missing.</Text>
-      </View>
+      <ScreenWrapper showBackButton>
+        <View style={styles.center}>
+          <ThemedText>Chapter data missing.</ThemedText>
+        </View>
+      </ScreenWrapper>
     );
   }
 
-  const sections = [
-    { id: "intro", title: "Introduction", screen: "IntroductionScreen" },
-    { id: "keypoints", title: "Key Points", screen: "KeyPointsScreen" },
-    { id: "mcqs", title: "MCQs", screen: "MCQScreen" },
-    { id: "ex1", title: "Exercise 1", screen: "ExerciseScreen", number: 1 },
-    { id: "ex2", title: "Exercise 2", screen: "ExerciseScreen", number: 2 },
-    { id: "ex3", title: "Exercise 3", screen: "ExerciseScreen", number: 3 },
-  ];
-
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {sections.map((item) => (
-        <TouchableOpacity
-          key={item.id}
-          style={styles.sectionBtn}
+    <ScreenWrapper showBackButton>
+      <ScrollView contentContainerStyle={styles.container}>
+        <ThemedText style={styles.title}>{chapterName}</ThemedText>
+
+        <SectionButton
+          label="INTRODUCTION"
           onPress={() =>
-            navigation.navigate(item.screen, {
-              chapterId: chapter.id,
-              exerciseNumber: item.number,
-            })
+            navigation.navigate("Intro", { chapterId, chapterName })
           }
-        >
-          <Text style={styles.sectionText}>{item.title}</Text>
-        </TouchableOpacity>
-      ))}
-    </ScrollView>
+        />
+
+        <SectionButton
+          label="KEY POINTS"
+          onPress={() =>
+            navigation.navigate("KeyPoints", { chapterId, chapterName })
+          }
+        />
+
+        <SectionButton
+          label="MCQs"
+          onPress={() =>
+            navigation.navigate("MCQs", { chapterId, chapterName })
+          }
+        />
+
+        {chapter.exercises.map((ex) => (
+          <SectionButton
+            key={ex.number}
+            label={EXERCISE ${ex.number}}
+            onPress={() =>
+              navigation.navigate("Exercise", {
+                chapterId,
+                chapterName,
+                exerciseNumber: ex.number,
+              })
+            }
+          />
+        ))}
+      </ScrollView>
+    </ScreenWrapper>
+  );
+}
+
+export default memo(ChapterOverviewScreen);
+
+/* -------------------------------------------------------------------------- */
+
+function SectionButton({
+  label,
+  onPress,
+}: {
+  label: string;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable style={styles.card} onPress={onPress}>
+      <ThemedText style={styles.cardText}>{label}</ThemedText>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 24,
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: 140,
   },
-  sectionBtn: {
-    backgroundColor: "#2c3147",
-    padding: 18,
-    borderRadius: 14,
-    marginBottom: 16,
-  },
-  sectionText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "600",
+
+  title: {
+    ...Typography.h3,
     textAlign: "center",
+    marginBottom: Spacing.xl,
   },
+
+  card: {
+    backgroundColor: JiguuColors.surface,
+    paddingVertical: Spacing.lg,
+    borderRadius: 16,
+    marginBottom: Spacing.md,
+  },
+
+  cardText: {
+    ...Typography.body,
+    textAlign: "center",
+    fontWeight: "600",
+  },
+
   center: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },
-  error: {
-    color: "red",
-    fontSize: 16,
   },
 });
