@@ -1,87 +1,41 @@
-/**
- * ------------------------------------------------------------
- * FILE: IntroScreen.tsx
- * ------------------------------------------------------------
- * PURPOSE:
- * Displays INTRODUCTION content for a selected chapter.
- *
- * - Receives chapterId & chapterName via navigation params.
- * - Fetches offline chapter data from chaptersContent.ts.
- * - Shows introduction section inside a styled card.
- * - Uses ScreenWrapper for global header/footer.
- * - Back button enabled.
- *
- * NOTE:
- * Actual chapter-wise introduction text will be added later.
- * Currently shows placeholder so flow can be tested.
- * ------------------------------------------------------------
- */
+// src/screens/IntroScreen.tsx
+// --------------------------------------------------
+// INTRO SCREEN
+// --------------------------------------------------
+// Shows Introduction content for selected chapter.
+// Receives chapterId + chapterName from navigation.
+// Currently placeholder screen.
+// --------------------------------------------------
 
-import React, { memo } from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
-import { RouteProp, useRoute } from "@react-navigation/native";
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import { useRoute } from "@react-navigation/native";
 
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { ThemedText } from "@/components/ThemedText";
-import { JiguuColors, Spacing, Typography } from "@/constants/theme";
-import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { Spacing, Typography } from "@/constants/theme";
 
-import { getChapterContent } from "@/data/chaptersContent";
-
-type RouteProps = RouteProp<RootStackParamList, "Intro">;
-
-function IntroScreen() {
-  const route = useRoute<RouteProps>();
-
-  const { chapterId, chapterName } = route.params;
-
-  const content = getChapterContent(chapterId);
-
-  const introSection = content.sections.find(
-    (s) => s.type === "introduction"
-  );
+export default function IntroScreen() {
+  const route = useRoute<any>();
+  const { chapterName } = route.params;
 
   return (
     <ScreenWrapper showBackButton>
-      <ScrollView
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-      >
+      <View style={styles.container}>
         <ThemedText style={styles.title}>{chapterName}</ThemedText>
-
-        <View style={styles.card}>
-          <ThemedText style={styles.text}>
-            {introSection
-              ? Introduction content for "${chapterName}" will be added here.
-              : "No introduction available."}
-          </ThemedText>
-        </View>
-      </ScrollView>
+        <ThemedText>Introduction screen coming soon…</ThemedText>
+      </View>
     </ScreenWrapper>
   );
 }
 
-export default memo(IntroScreen);
-
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: Spacing.xl,
-    paddingBottom: 120,
+    padding: Spacing.xl,
   },
   title: {
     ...Typography.h3,
+    marginBottom: Spacing.lg,
     textAlign: "center",
-    marginBottom: Spacing.xl,
-    fontWeight: "700",
-  },
-  card: {
-    backgroundColor: JiguuColors.surface,
-    padding: Spacing.lg,
-    borderRadius: 14,
-  },
-  text: {
-    ...Typography.body,
-    color: JiguuColors.textPrimary,
-    lineHeight: 22,
   },
 });
