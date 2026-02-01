@@ -1,43 +1,19 @@
-// src/screens/ChapterOverviewScreen.tsx
 // --------------------------------------------------
-// CHAPTER OVERVIEW SCREEN
-//
-// Purpose:
-// Shows chapter menu:
-//
-// - INTRODUCTION
-// - KEY POINTS
-// - MCQs
-// - EXERCISES
-//
-// User taps section → navigates to respective screen.
+// ChapterOverviewScreen.tsx
+// --------------------------------------------------
+// This screen appears after selecting a chapter.
+// It lists INTRODUCTION, KEY POINTS, MCQs and
+// dynamic EXERCISE buttons.
+// Data comes from chaptersContent.ts
 // --------------------------------------------------
 
 import React, { memo } from "react";
-import {
-  StyleSheet,
-  View,
-  FlatList,
-  Pressable,
-} from "react-native";
-
-import {
-  useRoute,
-  RouteProp,
-  useNavigation,
-} from "@react-navigation/native";
-
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StyleSheet, View, FlatList, Pressable } from "react-native";
+import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { ThemedText } from "@/components/ThemedText";
-
-import {
-  JiguuColors,
-  Spacing,
-  Typography,
-  BorderRadius,
-} from "@/constants/theme";
+import { JiguuColors, Spacing, Typography } from "@/constants/theme";
 
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
@@ -46,48 +22,54 @@ import {
   ChapterSection,
 } from "@/data/chaptersContent";
 
-type RouteProps = RouteProp<
-  RootStackParamList,
-  "ChapterOverview"
->;
-
-type NavProps = NativeStackNavigationProp<
-  RootStackParamList
->;
+type RouteProps = RouteProp<RootStackParamList, "ChapterOverview">;
 
 function ChapterOverviewScreen() {
   const route = useRoute<RouteProps>();
-  const navigation = useNavigation<NavProps>();
+  const navigation = useNavigation<any>();
 
   const { chapterId, chapterName } = route.params;
 
   const content = getChapterContent(chapterId);
 
   const handlePress = (section: ChapterSection) => {
+    if (section.type === "introduction") {
+      navigation.navigate("Intro", { chapterId, chapterName });
+    }
+
+    if (section.type === "keypoints") {
+      navigation.navigate("KeyPoints", { chapterId, chapterName });
+    }
+
     if (section.type === "mcqs") {
-      navigation.navigate("MCQs", {
+      navigation.navigate("MCQ", { chapterId, chapterName });
+    }
+
+    if (section.type === "exercise") {
+      navigation.navigate("Exercise", {
         chapterId,
         chapterName,
+        exerciseNumber: section.exerciseNumber,
       });
     }
   };
 
   return (
     <ScreenWrapper showBackButton>
+      {/* HEADER */}
       <View style={styles.header}>
-        <ThemedText style={styles.title}>
-          {chapterName}
-        </ThemedText>
+        <ThemedText style={styles.title}>{chapterName}</ThemedText>
       </View>
 
+      {/* BUTTON LIST */}
       <FlatList
         data={content.sections}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => handlePress(item)}
             style={styles.sectionCard}
+            onPress={() => handlePress(item)}
           >
             <ThemedText style={styles.sectionTitle}>
               {item.title}
@@ -115,19 +97,19 @@ const styles = StyleSheet.create({
 
   list: {
     paddingHorizontal: Spacing.xl,
-    paddingBottom: 120,
+    paddingBottom: 140,
   },
 
   sectionCard: {
     backgroundColor: JiguuColors.surface,
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.md,
+    paddingVertical: Spacing.lg,
+    borderRadius: 16,
     marginBottom: Spacing.md,
+    alignItems: "center",
   },
 
   sectionTitle: {
     ...Typography.body,
     fontWeight: "600",
-    textAlign: "center",
   },
 });
