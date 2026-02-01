@@ -1,12 +1,23 @@
 /**
- * File: ChapterOverviewScreen.tsx
+ * --------------------------------------------------
+ * FILE: ChapterOverviewScreen.tsx
  *
- * Purpose:
- * Shows overview buttons for a chapter:
+ * PURPOSE:
+ * Shows all main sections of a chapter:
  * - Introduction
  * - Key Points
  * - MCQs
- * - Exercises (dynamic based on chapter)
+ * - Exercises (dynamic numbers)
+ *
+ * Handles navigation to:
+ * - Intro screen
+ * - KeyPoints screen
+ * - MCQs screen
+ * - Exercise screen
+ *
+ * Chapter id + name + exercise number
+ * are passed through navigation params.
+ * --------------------------------------------------
  */
 
 import React, { memo } from "react";
@@ -16,14 +27,26 @@ import {
   FlatList,
   Pressable,
 } from "react-native";
-import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
+import {
+  useRoute,
+  RouteProp,
+  useNavigation,
+} from "@react-navigation/native";
 
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { ThemedText } from "@/components/ThemedText";
-import { JiguuColors, Spacing, Typography } from "@/constants/theme";
+import {
+  JiguuColors,
+  Spacing,
+  Typography,
+} from "@/constants/theme";
+
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
-import { getChapterContent } from "@/data/chaptersContent";
+import {
+  getChapterContent,
+  ChapterSection,
+} from "@/data/chaptersContent";
 
 type RouteProps = RouteProp<
   RootStackParamList,
@@ -32,50 +55,63 @@ type RouteProps = RouteProp<
 
 function ChapterOverviewScreen() {
   const route = useRoute<RouteProps>();
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
-  const { chapterId, chapterName } = route.params ?? {};
+  const { chapterId, chapterName } = route.params;
 
-  const content = getChapterContent?.(chapterId);
+  const content = getChapterContent(chapterId);
 
-  // 🛑 SAFETY — prevents crash
-  if (!content) {
-    return (
-      <ScreenWrapper showBackButton>
-        <ThemedText>No chapter content found.</ThemedText>
-      </ScreenWrapper>
-    );
+  function handleSectionPress(item: ChapterSection) {
+    if (item.type === "introduction") {
+      navigation.navigate("Intro", {
+        chapterId,
+        chapterName,
+      });
+      return;
+    }
+
+    if (item.type === "keypoints") {
+      navigation.navigate("KeyPoints", {
+        chapterId,
+        chapterName,
+      });
+      return;
+    }
+
+    if (item.type === "mcqs") {
+      navigation.navigate("MCQs", {
+        chapterId,
+        chapterName,
+      });
+      return;
+    }
+
+    if (item.type === "exercise") {
+      navigation.navigate("Exercise", {
+        chapterId,
+        chapterName,
+        exerciseNumber: item.exerciseNumber,
+      });
+      return;
+    }
   }
-
-  const sections = content.sections ?? [];
 
   return (
     <ScreenWrapper showBackButton>
-      {/* HEADER */}
       <View style={styles.header}>
         <ThemedText style={styles.title}>
           {chapterName}
         </ThemedText>
       </View>
 
-      {/* BUTTON LIST */}
       <FlatList
-        data={sections}
+        data={content.sections}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
           <Pressable
+            onPress={() => handleSectionPress(item)}
             style={styles.sectionCard}
-            onPress={() =>
-              navigation.navigate(
-                item.route as never,
-                {
-                  chapterId,
-                  chapterName,
-                  sectionId: item.id,
-                } as never
-              )
-            }
           >
             <ThemedText style={styles.sectionTitle}>
               {item.title}
@@ -97,7 +133,7 @@ const styles = StyleSheet.create({
 
   title: {
     ...Typography.h3,
-    fontWeight: "600",
+    fontWeight: "700",
     textAlign: "center",
   },
 
@@ -108,10 +144,10 @@ const styles = StyleSheet.create({
 
   sectionCard: {
     backgroundColor: JiguuColors.surface,
-    paddingVertical: Spacing.xl,
+    paddingVertical: Spacing.lg,
     paddingHorizontal: Spacing.lg,
     borderRadius: 18,
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.md,
   },
 
   sectionTitle: {
