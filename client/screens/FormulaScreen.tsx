@@ -9,7 +9,7 @@ import { FormulaCard } from "@/components/FormulaCard";
 import { EmptyState } from "@/components/EmptyState";
 import { JiguuColors, Spacing, Typography } from "@/constants/theme";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
-import { getFormulasForChapter, Formula } from "@/data/formulas";
+import { getFormulasForChapter, Formula, Subject } from "@/data/formulas";
 
 type FormulaRouteProp = RouteProp<RootStackParamList, "Formula">;
 
