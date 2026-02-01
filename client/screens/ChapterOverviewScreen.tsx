@@ -1,42 +1,20 @@
-// src/screens/ChapterOverviewScreen.tsx
-// --------------------------------------------------
-// Shows buttons for selected chapter:
-//
-// INTRODUCTION
-// KEY POINTS
-// MCQs
-// EXERCISE 1..N
-//
-// All chapters always land here first.
-// --------------------------------------------------
-
-import React, { memo } from "react";
-import { StyleSheet, View, FlatList } from "react-native";
-import {
-  useRoute,
-  RouteProp,
-  useNavigation,
-} from "@react-navigation/native";
+import React from "react";
+import { View, FlatList, StyleSheet } from "react-native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
+import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { ColorButton } from "@/components/ColorButton";
 import { ThemedText } from "@/components/ThemedText";
-import { RootStackParamList } from "@/navigation/RootStackNavigator";
-import { Spacing, Typography } from "@/constants/theme";
+
 import { getChapterContent } from "@/data/chaptersContent";
 
-type RouteProps = RouteProp<
-  RootStackParamList,
-  "ChapterOverview"
->;
+type NavProp = NativeStackNavigationProp<RootStackParamList>;
 
-type NavigationProp =
-  NativeStackNavigationProp<RootStackParamList>;
-
-function ChapterOverviewScreen() {
-  const route = useRoute<RouteProps>();
-  const navigation = useNavigation<NavigationProp>();
+export default function ChapterOverviewScreen() {
+  const navigation = useNavigation<NavProp>();
+  const route = useRoute<any>();
 
   const { chapterId, chapterName } = route.params;
 
@@ -52,10 +30,10 @@ function ChapterOverviewScreen() {
 
       <FlatList
         data={content.sections}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(i) => i.id}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => {
-          if (item.type === "introduction") {
+          if (item.type === "introduction")
             return (
               <ColorButton
                 title="INTRODUCTION"
@@ -68,9 +46,8 @@ function ChapterOverviewScreen() {
                 }
               />
             );
-          }
 
-          if (item.type === "keypoints") {
+          if (item.type === "keypoints")
             return (
               <ColorButton
                 title="KEY POINTS"
@@ -83,9 +60,8 @@ function ChapterOverviewScreen() {
                 }
               />
             );
-          }
 
-          if (item.type === "mcqs") {
+          if (item.type === "mcqs")
             return (
               <ColorButton
                 title="MCQs"
@@ -98,7 +74,6 @@ function ChapterOverviewScreen() {
                 }
               />
             );
-          }
 
           return (
             <ColorButton
@@ -113,21 +88,18 @@ function ChapterOverviewScreen() {
   );
 }
 
-export default memo(ChapterOverviewScreen);
-
 const styles = StyleSheet.create({
   header: {
     alignItems: "center",
-    marginBottom: Spacing.lg,
+    marginBottom: 24,
   },
   title: {
-    ...Typography.h3,
+    fontSize: 26,
     fontWeight: "700",
-    textAlign: "center",
   },
   list: {
-    paddingHorizontal: Spacing.xl,
+    paddingHorizontal: 22,
     paddingBottom: 120,
-    gap: Spacing.md,
+    gap: 14,
   },
 });
