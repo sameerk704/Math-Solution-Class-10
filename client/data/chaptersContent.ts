@@ -54,25 +54,54 @@ export interface ChapterContent {
 function buildDefaultChapter(chapterId: string): ChapterContent {
   return {
     chapterId,
-
-    introduction:
-      "Introduction content will be added here for this chapter.",
-
-    keyPoints: [
-      "Key points will be added later.",
-      "Important definitions will appear here.",
-    ],
-
-    mcqs: [
+    sections: [
       {
-        id: "mcq-1",
-        question: "Sample MCQ question for this chapter?",
-        options: ["Option A", "Option B", "Option C", "Option D"],
-        answerIndex: 0,
+        id: "intro",
+        title: "Introduction",
+        type: "intro",
+        items: [
+          "Introduction content will be added here for this chapter."
+        ]
       },
-    ],
 
-    exercises: [1, 2, 3],
+      {
+        id: "keypoints",
+        title: "Key Points",
+        type: "keypoints",
+        items: [
+          "Key points will be added later.",
+          "Important definitions will appear here."
+        ]
+      },
+
+      {
+        id: "mcqs",
+        title: "MCQs",
+        type: "mcqs",
+        items: []
+      },
+
+      {
+        id: "exercise-1",
+        title: "Exercise 1",
+        type: "exercise",
+        exerciseNo: 1
+      },
+
+      {
+        id: "exercise-2",
+        title: "Exercise 2",
+        type: "exercise",
+        exerciseNo: 2
+      },
+
+      {
+        id: "exercise-3",
+        title: "Exercise 3",
+        type: "exercise",
+        exerciseNo: 3
+      }
+    ]
   };
 }
 
