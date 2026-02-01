@@ -1,14 +1,12 @@
 // --------------------------------------------------
 // ChapterOverviewScreen.tsx
 // --------------------------------------------------
-// This screen appears after selecting a chapter.
-// It lists INTRODUCTION, KEY POINTS, MCQs and
-// dynamic EXERCISE buttons.
-// Data comes from chaptersContent.ts
+// Screen after chapter click.
+// Shows INTRODUCTION / KEY POINTS / MCQs / EXERCISES.
 // --------------------------------------------------
 
 import React, { memo } from "react";
-import { StyleSheet, View, FlatList, Pressable } from "react-native";
+import { StyleSheet, View, Pressable, ScrollView } from "react-native";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 
 import { ScreenWrapper } from "@/components/ScreenWrapper";
@@ -17,10 +15,7 @@ import { JiguuColors, Spacing, Typography } from "@/constants/theme";
 
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
-import {
-  getChapterContent,
-  ChapterSection,
-} from "@/data/chaptersContent";
+import { getChapterContent } from "@/data/chaptersContent";
 
 type RouteProps = RouteProp<RootStackParamList, "ChapterOverview">;
 
@@ -32,7 +27,19 @@ function ChapterOverviewScreen() {
 
   const content = getChapterContent(chapterId);
 
-  const handlePress = (section: ChapterSection) => {
+  const sections =
+    content?.sections?.length > 0
+      ? content.sections
+      : [
+          { id: "intro", title: "INTRODUCTION", type: "introduction" },
+          { id: "key", title: "KEY POINTS", type: "keypoints" },
+          { id: "mcq", title: "MCQs", type: "mcqs" },
+          { id: "ex1", title: "EXERCISE 1", type: "exercise", exerciseNumber: 1 },
+          { id: "ex2", title: "EXERCISE 2", type: "exercise", exerciseNumber: 2 },
+          { id: "ex3", title: "EXERCISE 3", type: "exercise", exerciseNumber: 3 },
+        ];
+
+  const handlePress = (section: any) => {
     if (section.type === "introduction") {
       navigation.navigate("Intro", { chapterId, chapterName });
     }
@@ -61,13 +68,11 @@ function ChapterOverviewScreen() {
         <ThemedText style={styles.title}>{chapterName}</ThemedText>
       </View>
 
-      {/* BUTTON LIST */}
-      <FlatList
-        data={content.sections}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        renderItem={({ item }) => (
+      {/* BUTTONS */}
+      <ScrollView contentContainerStyle={styles.list}>
+        {sections.map((item) => (
           <Pressable
+            key={item.id}
             style={styles.sectionCard}
             onPress={() => handlePress(item)}
           >
@@ -75,8 +80,8 @@ function ChapterOverviewScreen() {
               {item.title}
             </ThemedText>
           </Pressable>
-        )}
-      />
+        ))}
+      </ScrollView>
     </ScreenWrapper>
   );
 }
