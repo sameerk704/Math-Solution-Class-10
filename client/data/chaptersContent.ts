@@ -1,15 +1,13 @@
-// FILE: src/data/chaptersContent.ts
-// PURPOSE:
-// Central scalable content registry for all chapters.
-// Controls what appears on ChapterOverviewScreen:
-// - Introduction
-// - Key Points
-// - MCQs
-// - Dynamic Exercises list per chapter
+// src/data/chaptersContent.ts
+// --------------------------------------------------
+// Provides overview sections for each chapter.
+// Currently returns same structure for ALL chapters.
+// Can be extended later with real content.
+// --------------------------------------------------
 
 export type ChapterSectionType =
   | "introduction"
-  | "key-points"
+  | "keypoints"
   | "mcqs"
   | "exercise";
 
@@ -25,57 +23,55 @@ export interface ChapterContent {
   sections: ChapterSection[];
 }
 
-/* ---------------------------------------------------
-   MASTER CONTENT MAP (SCALABLE)
----------------------------------------------------- */
+/* --------------------------------------------------
+   DEFAULT TEMPLATE FOR ALL CHAPTERS
+-------------------------------------------------- */
 
-const chaptersContent: Record<string, ChapterContent> = {
-  "real-numbers": {
-    chapterId: "real-numbers",
-    sections: [
-      { id: "intro", title: "INTRODUCTION", type: "introduction" },
-      { id: "keypoints", title: "KEY POINTS", type: "key-points" },
-      { id: "mcqs", title: "MCQs", type: "mcqs" },
-
-      { id: "ex1", title: "EXERCISE 1", type: "exercise", exerciseNumber: 1 },
-      { id: "ex2", title: "EXERCISE 2", type: "exercise", exerciseNumber: 2 },
-    ],
-  },
-
-  polynomials: {
-    chapterId: "polynomials",
-    sections: [
-      { id: "intro", title: "INTRODUCTION", type: "introduction" },
-      { id: "keypoints", title: "KEY POINTS", type: "key-points" },
-      { id: "mcqs", title: "MCQs", type: "mcqs" },
-
-      { id: "ex1", title: "EXERCISE 1", type: "exercise", exerciseNumber: 1 },
-      { id: "ex2", title: "EXERCISE 2", type: "exercise", exerciseNumber: 2 },
-      { id: "ex3", title: "EXERCISE 3", type: "exercise", exerciseNumber: 3 },
-    ],
-  },
-
-  "pair-linear-equations": {
-    chapterId: "pair-linear-equations",
-    sections: [
-      { id: "intro", title: "INTRODUCTION", type: "introduction" },
-      { id: "keypoints", title: "KEY POINTS", type: "key-points" },
-      { id: "mcqs", title: "MCQs", type: "mcqs" },
-
-      { id: "ex1", title: "EXERCISE 1", type: "exercise", exerciseNumber: 1 },
-      { id: "ex2", title: "EXERCISE 2", type: "exercise", exerciseNumber: 2 },
-      { id: "ex3", title: "EXERCISE 3", type: "exercise", exerciseNumber: 3 },
-      { id: "ex4", title: "EXERCISE 4", type: "exercise", exerciseNumber: 4 },
-    ],
-  },
-};
-
-/* ---------------------------------------------------
-   SAFE ACCESS HELPERS
----------------------------------------------------- */
-
-export function getChapterContent(
-  chapterId: string
-): ChapterContent | null {
-  return chaptersContent[chapterId] ?? null;
+function buildDefaultSections(): ChapterSection[] {
+  return [
+    {
+      id: "intro",
+      title: "INTRODUCTION",
+      type: "introduction",
+    },
+    {
+      id: "keypoints",
+      title: "KEY POINTS",
+      type: "keypoints",
+    },
+    {
+      id: "mcqs",
+      title: "MCQs",
+      type: "mcqs",
+    },
+    {
+      id: "ex-1",
+      title: "EXERCISE 1",
+      type: "exercise",
+      exerciseNumber: 1,
+    },
+    {
+      id: "ex-2",
+      title: "EXERCISE 2",
+      type: "exercise",
+      exerciseNumber: 2,
+    },
+    {
+      id: "ex-3",
+      title: "EXERCISE 3",
+      type: "exercise",
+      exerciseNumber: 3,
+    },
+  ];
 }
+
+/* --------------------------------------------------
+   PUBLIC HELPER
+-------------------------------------------------- */
+
+export function getChapterContent(chapterId: string): ChapterContent {
+  return {
+    chapterId,
+    sections: buildDefaultSections(),
+  };
+};
