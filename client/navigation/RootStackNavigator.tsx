@@ -1,7 +1,8 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
+ 
 import { JiguuColors } from "@/constants/theme";
+import ChapterOverViewScreen from "@/screens/ ChapterOverViewScreen";
 import HomeScreen from "@/screens/HomeScreen";
 import SubjectScreen from "@/screens/SubjectScreen";
 import ChapterListScreen from "@/screens/ChapterListScreen";
@@ -20,6 +21,12 @@ export type RootStackParamList = {
   AboutEducator: undefined;
   QuickNotes: undefined;
   AllChapters: undefined;
+  
+  ChapterOverview: {
+  chapterId: string;
+  chapterName: string;
+  subject: Subject;
+};
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -33,6 +40,7 @@ export default function RootStackNavigator() {
         contentStyle: { backgroundColor: JiguuColors.background },
       }}
     >
+      
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Subject" component={SubjectScreen} />
       <Stack.Screen name="ChapterList" component={ChapterListScreen} />
@@ -41,6 +49,7 @@ export default function RootStackNavigator() {
       <Stack.Screen name="AboutEducator" component={AboutEducatorScreen} />
       <Stack.Screen name="QuickNotes" component={QuickNotesScreen} />
       <Stack.Screen name="AllChapters" component={ChapterListScreen} />
+      <Stack.Screen name="ChapterOverView" component={ChapterOverViewScreen} />
     </Stack.Navigator>
   );
 }
