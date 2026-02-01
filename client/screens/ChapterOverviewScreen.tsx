@@ -1,24 +1,17 @@
-/**
- * --------------------------------------------------
- * FILE: ChapterOverviewScreen.tsx
- *
- * PURPOSE:
- * Shows all main sections of a chapter:
- * - Introduction
- * - Key Points
- * - MCQs
- * - Exercises (dynamic numbers)
- *
- * Handles navigation to:
- * - Intro screen
- * - KeyPoints screen
- * - MCQs screen
- * - Exercise screen
- *
- * Chapter id + name + exercise number
- * are passed through navigation params.
- * --------------------------------------------------
- */
+// src/screens/ChapterOverviewScreen.tsx
+// --------------------------------------------------
+// CHAPTER OVERVIEW SCREEN
+//
+// Purpose:
+// Shows chapter menu:
+//
+// - INTRODUCTION
+// - KEY POINTS
+// - MCQs
+// - EXERCISES
+//
+// User taps section → navigates to respective screen.
+// --------------------------------------------------
 
 import React, { memo } from "react";
 import {
@@ -27,18 +20,23 @@ import {
   FlatList,
   Pressable,
 } from "react-native";
+
 import {
   useRoute,
   RouteProp,
   useNavigation,
 } from "@react-navigation/native";
 
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { ThemedText } from "@/components/ThemedText";
+
 import {
   JiguuColors,
   Spacing,
   Typography,
+  BorderRadius,
 } from "@/constants/theme";
 
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
@@ -53,48 +51,26 @@ type RouteProps = RouteProp<
   "ChapterOverview"
 >;
 
+type NavProps = NativeStackNavigationProp<
+  RootStackParamList
+>;
+
 function ChapterOverviewScreen() {
   const route = useRoute<RouteProps>();
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<NavProps>();
 
   const { chapterId, chapterName } = route.params;
 
   const content = getChapterContent(chapterId);
 
-  function handleSectionPress(item: ChapterSection) {
-    if (item.type === "introduction") {
-      navigation.navigate("Intro", {
-        chapterId,
-        chapterName,
-      });
-      return;
-    }
-
-    if (item.type === "keypoints") {
-      navigation.navigate("KeyPoints", {
-        chapterId,
-        chapterName,
-      });
-      return;
-    }
-
-    if (item.type === "mcqs") {
+  const handlePress = (section: ChapterSection) => {
+    if (section.type === "mcqs") {
       navigation.navigate("MCQs", {
         chapterId,
         chapterName,
       });
-      return;
     }
-
-    if (item.type === "exercise") {
-      navigation.navigate("Exercise", {
-        chapterId,
-        chapterName,
-        exerciseNumber: item.exerciseNumber,
-      });
-      return;
-    }
-  }
+  };
 
   return (
     <ScreenWrapper showBackButton>
@@ -110,7 +86,7 @@ function ChapterOverviewScreen() {
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => handleSectionPress(item)}
+            onPress={() => handlePress(item)}
             style={styles.sectionCard}
           >
             <ThemedText style={styles.sectionTitle}>
@@ -144,9 +120,8 @@ const styles = StyleSheet.create({
 
   sectionCard: {
     backgroundColor: JiguuColors.surface,
-    paddingVertical: Spacing.lg,
-    paddingHorizontal: Spacing.lg,
-    borderRadius: 18,
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.md,
     marginBottom: Spacing.md,
   },
 
