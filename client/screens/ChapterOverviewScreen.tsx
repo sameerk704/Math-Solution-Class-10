@@ -1,13 +1,34 @@
+// src/screens/ChapterOverviewScreen.tsx
 // --------------------------------------------------
-// ChapterOverviewScreen.tsx
-// --------------------------------------------------
-// Screen after chapter click.
-// Shows INTRODUCTION / KEY POINTS / MCQs / EXERCISES.
+// CHAPTER OVERVIEW SCREEN
+//
+// Purpose:
+// Shows list of sections for selected chapter:
+//
+// - INTRODUCTION
+// - KEY POINTS
+// - MCQs
+// - EXERCISE 1, 2, 3...
+//
+// Exercise buttons navigate to ExerciseHubScreen
+// with chapterId, chapterName and exerciseNumber.
+//
+// Header & Footer are handled globally by ScreenWrapper.
 // --------------------------------------------------
 
 import React, { memo } from "react";
-import { StyleSheet, View, Pressable, ScrollView } from "react-native";
-import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  Pressable,
+} from "react-native";
+
+import {
+  useRoute,
+  RouteProp,
+  useNavigation,
+} from "@react-navigation/native";
 
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { ThemedText } from "@/components/ThemedText";
@@ -15,64 +36,48 @@ import { JiguuColors, Spacing, Typography } from "@/constants/theme";
 
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
-import { getChapterContent } from "@/data/chaptersContent";
+import {
+  getChapterContent,
+  ChapterSection,
+} from "@/data/chaptersContent";
 
 type RouteProps = RouteProp<RootStackParamList, "ChapterOverview">;
 
 function ChapterOverviewScreen() {
   const route = useRoute<RouteProps>();
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
 
   const { chapterId, chapterName } = route.params;
 
   const content = getChapterContent(chapterId);
 
-  const sections =
-    content?.sections?.length > 0
-      ? content.sections
-      : [
-          { id: "intro", title: "INTRODUCTION", type: "introduction" },
-          { id: "key", title: "KEY POINTS", type: "keypoints" },
-          { id: "mcq", title: "MCQs", type: "mcqs" },
-          { id: "ex1", title: "EXERCISE 1", type: "exercise", exerciseNumber: 1 },
-          { id: "ex2", title: "EXERCISE 2", type: "exercise", exerciseNumber: 2 },
-          { id: "ex3", title: "EXERCISE 3", type: "exercise", exerciseNumber: 3 },
-        ];
-
-  const handlePress = (section: any) => {
-    if (section.type === "introduction") {
-      navigation.navigate("Intro", { chapterId, chapterName });
-    }
-
-    if (section.type === "keypoints") {
-      navigation.navigate("KeyPoints", { chapterId, chapterName });
-    }
-
-    if (section.type === "mcqs") {
-      navigation.navigate("MCQs", { chapterId, chapterName });
-    }
-
-    if (section.type === "exercise") {
-      navigation.navigate("Exercise", {
-        chapterId,
-        chapterName,
-        exerciseNumber: section.exerciseNumber,
-      });
+  const handlePress = (item: ChapterSection) => {
+    if (item.type === "exercise") {
+      navigation.navigate(
+        "ExerciseHub" as never,
+        {
+          chapterId,
+          chapterName,
+          exerciseNumber: item.exerciseNumber,
+        } as never
+      );
     }
   };
 
   return (
     <ScreenWrapper showBackButton>
-      {/* HEADER */}
       <View style={styles.header}>
-        <ThemedText style={styles.title}>{chapterName}</ThemedText>
+        <ThemedText style={styles.title}>
+          {chapterName}
+        </ThemedText>
       </View>
 
-      {/* BUTTONS */}
-      <ScrollView contentContainerStyle={styles.list}>
-        {sections.map((item) => (
+      <FlatList
+        data={content.sections}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
+        renderItem={({ item }) => (
           <Pressable
-            key={item.id}
             style={styles.sectionCard}
             onPress={() => handlePress(item)}
           >
@@ -80,8 +85,8 @@ function ChapterOverviewScreen() {
               {item.title}
             </ThemedText>
           </Pressable>
-        ))}
-      </ScrollView>
+        )}
+      />
     </ScreenWrapper>
   );
 }
@@ -108,13 +113,14 @@ const styles = StyleSheet.create({
   sectionCard: {
     backgroundColor: JiguuColors.surface,
     paddingVertical: Spacing.lg,
-    borderRadius: 16,
+    paddingHorizontal: Spacing.lg,
+    borderRadius: 18,
     marginBottom: Spacing.md,
-    alignItems: "center",
   },
 
   sectionTitle: {
     ...Typography.body,
     fontWeight: "600",
+    textAlign: "center",
   },
 });
