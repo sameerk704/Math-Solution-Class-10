@@ -49,7 +49,7 @@ function ChapterOverviewScreen() {
     }
 
     if (section.type === "mcqs") {
-      navigation.navigate("MCQ", { chapterId, chapterName });
+      navigation.navigate("MCQs", { chapterId, chapterName });
     }
 
     if (section.type === "exercise") {
