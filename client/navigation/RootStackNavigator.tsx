@@ -40,7 +40,7 @@ import AboutEducatorScreen from "@/screens/AboutEducatorScreen";
 import QuickNotesScreen from "@/screens/QuickNotesScreen";
 
 import { Subject } from "@/data/formulas";
-
+import ExerciseHubScreen from "@/screens/ExerciseHubScreen";
 /* --------------------------------------------------
    ROUTE TYPES
 -------------------------------------------------- */
@@ -87,6 +87,12 @@ export type RootStackParamList = {
   NewsEvents: undefined;
   AboutEducator: undefined;
   QuickNotes: undefined;
+
+   ExerciseHub: {       /* ye add kiya mene*/
+  chapterId: string;
+  chapterName: string;
+  exerciseNumber: number;
+};
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -134,6 +140,9 @@ export default function RootStackNavigator() {
       <Stack.Screen name="AboutEducator" component={AboutEducatorScreen} />
 
       <Stack.Screen name="QuickNotes" component={QuickNotesScreen} />
+
+       <Stack.Screen  name="ExerciseHub" component={ExerciseHubScreen} />        /* Last me add kiya */
+    
     </Stack.Navigator>
   );
 }
