@@ -3,15 +3,16 @@
 // GLOBAL SEARCH PROVIDER
 //
 // Purpose:
-// - Builds offline search index once at app launch.
-// - Stores index in React Context.
-// - Exposes query API to entire app.
-// - Used by header search bar, screens, voice search.
+// - Builds the global offline search index once.
+// - Stores it in memory.
+// - Exposes search() function to entire app.
+// - Used by StaticHeader search bar & voice.
 //
-// Depends on:
+// Powered by:
 // - searchIndexBuilder.ts
-// - searchEngine.ts
+// - searchQueryEngine.ts
 //
+// Wraps App root.
 // --------------------------------------------------
 
 import React, {
@@ -20,18 +21,10 @@ import React, {
   useEffect,
   useMemo,
   useState,
-  ReactNode,
 } from "react";
 
-import {
-  buildSearchIndex,
-  SearchIndexItem,
-} from "@/search/searchIndexBuilder";
-
-import {
-  runSearch,
-  SearchQueryOptions,
-} from "@/search/searchEngine";
+import { buildSearchIndex, SearchIndexItem } from "./searchIndexBuilder";
+import { runSearchQuery } from "./searchQueryEngine";
 
 /* --------------------------------------------------
    TYPES
@@ -39,20 +32,15 @@ import {
 
 interface SearchContextValue {
   ready: boolean;
+  search: (query: string) => SearchIndexItem[];
   index: SearchIndexItem[];
-  search: (
-    query: string,
-    options?: SearchQueryOptions
-  ) => SearchIndexItem[];
 }
 
 /* --------------------------------------------------
    CONTEXT
 -------------------------------------------------- */
 
-const SearchContext = createContext<SearchContextValue | null>(
-  null
-);
+const SearchContext = createContext<SearchContextValue | null>(null);
 
 /* --------------------------------------------------
    PROVIDER
@@ -61,28 +49,33 @@ const SearchContext = createContext<SearchContextValue | null>(
 export function SearchProvider({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
   const [index, setIndex] = useState<SearchIndexItem[]>([]);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const idx = buildSearchIndex();
-    setIndex(idx);
-    setReady(true);
+    const build = async () => {
+      const builtIndex = await buildSearchIndex();
+      setIndex(builtIndex);
+      setReady(true);
+    };
 
-    console.log("🔍 Search index ready:", idx.length);
+    build();
   }, []);
 
-  const value = useMemo<SearchContextValue>(
-    () => ({
-      ready,
-      index,
-      search: (query, options) =>
-        runSearch(query, index, options),
-    }),
-    [ready, index]
+  const search = useMemo(
+    () => (query: string) => {
+      return runSearchQuery(query, index);
+    },
+    [index]
   );
+
+  const value: SearchContextValue = {
+    ready,
+    search,
+    index,
+  };
 
   return (
     <SearchContext.Provider value={value}>
@@ -99,9 +92,7 @@ export function useSearch() {
   const ctx = useContext(SearchContext);
 
   if (!ctx) {
-    throw new Error(
-      "useSearch must be used inside SearchProvider"
-    );
+    throw new Error("useSearch must be used inside SearchProvider");
   }
 
   return ctx;
