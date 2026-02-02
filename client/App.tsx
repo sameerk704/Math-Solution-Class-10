@@ -1,3 +1,22 @@
+// src/App.tsx
+// --------------------------------------------------
+// APPLICATION ROOT
+//
+// Purpose:
+// - Initializes fonts & splash screen.
+// - Sets up React Navigation.
+// - Provides global providers:
+//     • React Query
+//     • Safe Area
+//     • Gesture Handler
+//     • Keyboard Controller
+//     • GLOBAL SEARCH PROVIDER
+//
+// SearchProvider is injected here so the
+// entire app + header can access search.
+//
+// --------------------------------------------------
+
 import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
@@ -19,6 +38,9 @@ import { queryClient } from "@/lib/query-client";
 import RootStackNavigator from "@/navigation/RootStackNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { JiguuColors } from "@/constants/theme";
+
+/* 🔍 GLOBAL SEARCH PROVIDER */
+import { SearchProvider } from "@/search/SearchProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -54,9 +76,13 @@ export default function App() {
         <SafeAreaProvider style={styles.safeArea}>
           <GestureHandlerRootView style={styles.root}>
             <KeyboardProvider>
-              <NavigationContainer theme={navTheme}>
-                <RootStackNavigator />
-              </NavigationContainer>
+              {/* 🔥 SEARCH PROVIDER WRAPS ENTIRE APP */}
+              <SearchProvider>
+                <NavigationContainer theme={navTheme}>
+                  <RootStackNavigator />
+                </NavigationContainer>
+              </SearchProvider>
+
               <StatusBar style="dark" />
             </KeyboardProvider>
           </GestureHandlerRootView>
