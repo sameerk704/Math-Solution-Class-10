@@ -23,8 +23,12 @@ import React, {
   useState,
 } from "react";
 
-import { buildSearchIndex, SearchIndexItem } from "./searchIndexBuilder";
-import { runSearchQuery } from "./searchQueryEngine";
+import {
+  buildSearchIndex,
+  SearchIndexItem,
+} from "./searchIndexBuilder";
+
+import { querySearchIndex } from "./searchQueryEngine";
 
 /* --------------------------------------------------
    TYPES
@@ -40,7 +44,9 @@ interface SearchContextValue {
    CONTEXT
 -------------------------------------------------- */
 
-const SearchContext = createContext<SearchContextValue | null>(null);
+const SearchContext = createContext<SearchContextValue | null>(
+  null
+);
 
 /* --------------------------------------------------
    PROVIDER
@@ -55,8 +61,8 @@ export function SearchProvider({
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const build = async () => {
-      const builtIndex = await buildSearchIndex();
+    const build = () => {
+      const builtIndex = buildSearchIndex();
       setIndex(builtIndex);
       setReady(true);
     };
@@ -66,7 +72,7 @@ export function SearchProvider({
 
   const search = useMemo(
     () => (query: string) => {
-      return runSearchQuery(query, index);
+      return querySearchIndex(query, index);
     },
     [index]
   );
@@ -92,7 +98,9 @@ export function useSearch() {
   const ctx = useContext(SearchContext);
 
   if (!ctx) {
-    throw new Error("useSearch must be used inside SearchProvider");
+    throw new Error(
+      "useSearch must be used inside SearchProvider"
+    );
   }
 
   return ctx;
