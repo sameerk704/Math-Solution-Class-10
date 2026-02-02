@@ -14,12 +14,14 @@
 // - MCQs
 // - Exercise Hub
 // - Question List
+// - Question Parts
+// - Solution
 // - Quick Notes
 // - News & Events
 // - About Educator
 //
-// All screens are wrapped by ScreenWrapper which
-// provides static header & footer.
+// All screens are wrapped using ScreenWrapper
+// which provides static header & footer.
 // --------------------------------------------------
 
 import React from "react";
@@ -35,6 +37,8 @@ import MCQScreen from "@/screens/MCQScreen";
 
 import ExerciseHubScreen from "@/screens/ExerciseHubScreen";
 import QuestionListScreen from "@/screens/QuestionListScreen";
+import QuestionPartsScreen from "@/screens/QuestionPartsScreen";
+import SolutionScreen from "@/screens/SolutionScreen";
 
 import QuickNotesScreen from "@/screens/QuickNotesScreen";
 import NewsEventsScreen from "@/screens/NewsEventsScreen";
@@ -80,6 +84,25 @@ export type RootStackParamList = {
     exerciseNumber: string;
   };
 
+  QuestionParts: {
+    chapterId: string;
+    chapterName: string;
+    exerciseNumber: string;
+    questionNumber: number;
+    parts: {
+      id: string;
+      label: string;
+    }[];
+  };
+
+  Solution: {
+    chapterId: string;
+    chapterName: string;
+    exerciseNumber: string;
+    questionNumber: number;
+    partId: string;
+  };
+
   QuickNotes: undefined;
   NewsEvents: undefined;
   AboutEducator: undefined;
@@ -109,15 +132,13 @@ export default function RootStackNavigator() {
 
       <Stack.Screen name="MCQs" component={MCQScreen} />
 
-      <Stack.Screen
-        name="ExerciseHub"
-        component={ExerciseHubScreen}
-      />
+      <Stack.Screen name="ExerciseHub" component={ExerciseHubScreen} />
 
-      <Stack.Screen
-        name="QuestionList"
-        component={QuestionListScreen}
-      />
+      <Stack.Screen name="QuestionList" component={QuestionListScreen} />
+
+      <Stack.Screen name="QuestionParts" component={QuestionPartsScreen} />
+
+      <Stack.Screen name="Solution" component={SolutionScreen} />
 
       <Stack.Screen name="QuickNotes" component={QuickNotesScreen} />
 
