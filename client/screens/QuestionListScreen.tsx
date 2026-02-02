@@ -1,23 +1,51 @@
-import React from "react";
-import { View, StyleSheet, Pressable } from "react-native";
-import { useRoute, useNavigation } from "@react-navigation/native";
+// src/screens/QuestionListScreen.tsx
+// --------------------------------------------------
+// QUESTION LIST SCREEN
+//
+// Purpose:
+// Shows all questions for a selected exercise.
+//
+// Currently:
+// - Placeholder list generated safely.
+// - Real data will be injected later from
+//   chapterQuestions.ts.
+//
+// Params:
+// - chapterId
+// - chapterName
+// - exerciseNumber
+//
+// Next:
+// Question → Parts Screen
+// --------------------------------------------------
+
+import React, { memo } from "react";
+import { View, StyleSheet, FlatList, Pressable } from "react-native";
+import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { ThemedText } from "@/components/ThemedText";
 
-import { getChapterContent } from "@/data/chaptersContent";
+import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
-export default function QuestionListScreen() {
-  const route = useRoute<any>();
-  const navigation = useNavigation<any>();
+import { JiguuColors, Spacing, Typography } from "@/constants/theme";
 
-  const { chapterId, chapterName, exerciseNumber } = route.params;
+type RouteProps = RouteProp<RootStackParamList, "QuestionList">;
 
-  const chapter = getChapterContent(chapterId);
+type NavProp = NativeStackNavigationProp<RootStackParamList>;
 
-  const exercise = chapter.exercises.find(
-    (e) => e.number === exerciseNumber
-  );
+function QuestionListScreen() {
+  const route = useRoute<RouteProps>();
+  const navigation = useNavigation<NavProp>();
+
+  const { chapterName, exerciseNumber } = route.params;
+
+  // TEMP SAFE QUESTIONS
+  const questions = Array.from({ length: 5 }).map((_, i) => ({
+    id: q-${i + 1},
+    label: Question ${i + 1},
+  }));
 
   return (
     <ScreenWrapper showBackButton>
@@ -26,36 +54,51 @@ export default function QuestionListScreen() {
           Exercise {exerciseNumber}
         </ThemedText>
 
-        {exercise?.questions.map((q, idx) => (
-          <Pressable
-            key={q.id}
-            style={styles.card}
-            onPress={() =>
-              navigation.navigate("QuestionDetail", {
-                chapterName,
-                questionText: q.text,
-                parts: q.parts,
-              })
-            }
-          >
-            <ThemedText style={styles.text}>
-              Question {idx + 1}
-            </ThemedText>
-          </Pressable>
-        ))}
+        <FlatList
+          data={questions}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <Pressable
+              style={styles.card}
+              onPress={() =>
+                console.log("Future → Question Parts Screen")
+              }
+            >
+              <ThemedText style={styles.text}>
+                {item.label}
+              </ThemedText>
+            </Pressable>
+          )}
+        />
       </View>
     </ScreenWrapper>
   );
 }
 
+export default memo(QuestionListScreen);
+
 const styles = StyleSheet.create({
-  container: { padding: 24 },
-  title: { fontSize: 22, textAlign: "center", marginBottom: 20 },
-  card: {
-    backgroundColor: "#2c3147",
-    padding: 18,
-    borderRadius: 14,
-    marginBottom: 12,
+  container: {
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: 120,
   },
-  text: { color: "#fff", textAlign: "center" },
+
+  title: {
+    ...Typography.h3,
+    textAlign: "center",
+    marginBottom: Spacing.xl,
+  },
+
+  card: {
+    backgroundColor: JiguuColors.surface,
+    paddingVertical: Spacing.lg,
+    borderRadius: 16,
+    marginBottom: Spacing.md,
+    alignItems: "center",
+  },
+
+  text: {
+    ...Typography.body,
+    fontWeight: "600",
+  },
 });
