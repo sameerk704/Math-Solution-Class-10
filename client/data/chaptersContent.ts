@@ -1,96 +1,87 @@
 // src/data/chaptersContent.ts
 // --------------------------------------------------
-// CENTRAL OFFLINE CONTENT SOURCE FOR ALL CHAPTERS
+// Central offline chapter content store.
 //
-// Controls:
-// - Intro text
-// - Key points
-// - MCQs
-// - Exercises
+// Purpose:
+// - Defines how many exercises exist per chapter.
+// - NCERT-style numbering (1.1, 1.2 ...).
+// - Used by Exercise Hub & Question lists later.
+//
+// This is expandable for:
 // - Questions
 // - Parts
-//
-// Every chapter ALWAYS returns:
-// Intro / KeyPoints / MCQs / Exercises[]
+// - Examples
+// - Theorems
 // --------------------------------------------------
 
-export type QuestionPart = {
-  id: string;
-  text: string;
-};
-
-export type Question = {
-  id: string;
-  text: string;
-  parts: QuestionPart[];
-};
-
 export type Exercise = {
-  number: number;
-  questions: Question[];
+  number: string; // e.g. "1.1"
 };
 
 export type ChapterContent = {
-  chapterId: string;
-  intro: string;
-  keyPoints: string[];
-  mcqs: string[];
+  id: string;
+  name: string;
   exercises: Exercise[];
 };
 
-/* -------------------------------------------------- */
+/* --------------------------------------------------
+   CLASS 10 — CHAPTER EXERCISE MAP
+-------------------------------------------------- */
 
-function buildDefaultExercises(): Exercise[] {
-  return [
-    {
-      number: 1,
-      questions: [
-        {
-          id: "q1",
-          text: "Solve the given problem.",
-          parts: [
-            { id: "a", text: "Part (a)" },
-            { id: "b", text: "Part (b)" },
-          ],
-        },
-        {
-          id: "q2",
-          text: "Find the required value.",
-          parts: [],
-        },
-      ],
-    },
-    {
-      number: 2,
-      questions: [
-        {
-          id: "q1",
-          text: "Prove the statement.",
-          parts: [],
-        },
-      ],
-    },
-    {
-      number: 3,
-      questions: [
-        {
-          id: "q1",
-          text: "Calculate area.",
-          parts: [],
-        },
-      ],
-    },
-  ];
-}
+export const chaptersContent: ChapterContent[] = [
+  {
+    id: "real-numbers",
+    name: "Real Numbers",
+    exercises: [
+      { number: "1.1" },
+      { number: "1.2" },
+      { number: "1.3" },
+    ],
+  },
 
-/* -------------------------------------------------- */
+  {
+    id: "polynomials",
+    name: "Polynomials",
+    exercises: [
+      { number: "2.1" },
+      { number: "2.2" },
+      { number: "2.3" },
+    ],
+  },
 
-export function getChapterContent(chapterId: string): ChapterContent {
-  return {
-    chapterId,
-    intro: "Introduction content will be added later.",
-    keyPoints: ["Key point 1", "Key point 2"],
-    mcqs: [],
-    exercises: buildDefaultExercises(),
-  };
+  {
+    id: "pair-linear-equations",
+    name: "Pair of Linear Equations",
+    exercises: [
+      { number: "3.1" },
+      { number: "3.2" },
+    ],
+  },
+
+  {
+    id: "quadratic-equations",
+    name: "Quadratic Equations",
+    exercises: [
+      { number: "4.1" },
+      { number: "4.2" },
+    ],
+  },
+
+  {
+    id: "arithmetic-progressions",
+    name: "Arithmetic Progressions",
+    exercises: [
+      { number: "5.1" },
+      { number: "5.2" },
+    ],
+  },
+];
+
+/* --------------------------------------------------
+   HELPERS
+-------------------------------------------------- */
+
+export function getChapterExercises(chapterId: string): Exercise[] {
+  const chapter = chaptersContent.find((c) => c.id === chapterId);
+  return chapter?.exercises ?? [];
 }
