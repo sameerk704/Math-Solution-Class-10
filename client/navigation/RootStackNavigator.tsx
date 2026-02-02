@@ -1,11 +1,3 @@
-// src/navigation/RootStackNavigator.tsx
-// -----------------------------------------------------------------------------
-// ROOT STACK NAVIGATION CONFIG
-//
-// Defines ALL application routes and their params.
-// Must stay aligned with screen navigation calls.
-// -----------------------------------------------------------------------------
-
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -16,6 +8,10 @@ import ChapterOverviewScreen from "@/screens/ChapterOverviewScreen";
 import IntroScreen from "@/screens/IntroScreen";
 import KeyPointsScreen from "@/screens/KeyPointsScreen";
 import MCQScreen from "@/screens/MCQScreen";
+
+import ExerciseHubScreen from "@/screens/ExerciseHubScreen";
+import QuestionListScreen from "@/screens/QuestionListScreen";
+import QuestionDetailScreen from "@/screens/QuestionDetailScreen";
 
 import QuickNotesScreen from "@/screens/QuickNotesScreen";
 import NewsEventsScreen from "@/screens/NewsEventsScreen";
@@ -46,10 +42,21 @@ export type RootStackParamList = {
     chapterName: string;
   };
 
-  Exercise: {
+  ExerciseHub: {
+    chapterId: string;
+    chapterName: string;
+  };
+
+  QuestionList: {
     chapterId: string;
     chapterName: string;
     exerciseNumber: number;
+  };
+
+  QuestionDetail: {
+    chapterName: string;
+    questionText: string;
+    parts: { id: string; text: string }[];
   };
 
   QuickNotes: undefined;
@@ -70,6 +77,10 @@ export default function RootStackNavigator() {
       <Stack.Screen name="Intro" component={IntroScreen} />
       <Stack.Screen name="KeyPoints" component={KeyPointsScreen} />
       <Stack.Screen name="MCQs" component={MCQScreen} />
+
+      <Stack.Screen name="ExerciseHub" component={ExerciseHubScreen} />
+      <Stack.Screen name="QuestionList" component={QuestionListScreen} />
+      <Stack.Screen name="QuestionDetail" component={QuestionDetailScreen} />
 
       <Stack.Screen name="QuickNotes" component={QuickNotesScreen} />
       <Stack.Screen name="NewsEvents" component={NewsEventsScreen} />
