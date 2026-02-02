@@ -1,143 +1,82 @@
 // src/screens/ChapterOverviewScreen.tsx
-// -----------------------------------------------------------------------------
-// HUB SCREEN after chapter selection.
+// --------------------------------------------------
+// CHAPTER OVERVIEW SCREEN
 //
-// Shows:
-// - INTRODUCTION
-// - KEY POINTS
+// Displays main chapter menu:
+// - Introduction
+// - Key Points
 // - MCQs
-// - Exercise buttons (dynamic)
-//
-// All navigation passes chapterId + chapterName.
-// -----------------------------------------------------------------------------
+// - Exercises Hub
+// --------------------------------------------------
 
-import React, { memo } from "react";
-import { StyleSheet, View, ScrollView, Pressable } from "react-native";
-import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
+import React from "react";
+import { StyleSheet, View, Pressable } from "react-native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { ThemedText } from "@/components/ThemedText";
-import { JiguuColors, Spacing, Typography } from "@/constants/theme";
-
+import { Spacing, JiguuColors, Typography } from "@/constants/theme";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
-import { getChapterContent } from "@/data/chaptersContent";
 
-type RouteProps = RouteProp<
-  RootStackParamList,
-  "ChapterOverview"
->;
+type RouteProps = RouteProp<RootStackParamList, "ChapterOverview">;
+type NavProps = NativeStackNavigationProp<RootStackParamList>;
 
-type NavProp = NativeStackNavigationProp<RootStackParamList>;
-
-function ChapterOverviewScreen() {
+export default function ChapterOverviewScreen() {
   const route = useRoute<RouteProps>();
-  const navigation = useNavigation<NavProp>();
+  const navigation = useNavigation<NavProps>();
 
   const { chapterId, chapterName } = route.params;
 
-  const chapter = getChapterContent(chapterId);
-
-  if (!chapter) {
-    return (
-      <ScreenWrapper showBackButton>
-        <View style={styles.center}>
-          <ThemedText>Chapter data missing.</ThemedText>
-        </View>
-      </ScreenWrapper>
-    );
-  }
-
   return (
     <ScreenWrapper showBackButton>
-      <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.container}>
         <ThemedText style={styles.title}>{chapterName}</ThemedText>
 
-        <SectionButton
-          label="INTRODUCTION"
-          onPress={() =>
-            navigation.navigate("Intro", { chapterId, chapterName })
-          }
-        />
-
-        <SectionButton
-          label="KEY POINTS"
-          onPress={() =>
-            navigation.navigate("KeyPoints", { chapterId, chapterName })
-          }
-        />
-
-        <SectionButton
-          label="MCQs"
-          onPress={() =>
-            navigation.navigate("MCQs", { chapterId, chapterName })
-          }
-        />
-
-        {chapter.exercises.map((ex) => (
-          <SectionButton
-            key={ex.number}
-            label={`EXERCISE ${ex.number}`}
+        {[
+          { label: "INTRODUCTION", screen: "Intro" },
+          { label: "KEY POINTS", screen: "KeyPoints" },
+          { label: "MCQs", screen: "MCQs" },
+          { label: "EXERCISES", screen: "ExerciseHub" },
+        ].map((item) => (
+          <Pressable
+            key={item.label}
+            style={styles.button}
             onPress={() =>
-              navigation.navigate("Exercise", {
+              navigation.navigate(item.screen as any, {
                 chapterId,
                 chapterName,
-                exerciseNumber: ex.number,
               })
             }
-          />
+          >
+            <ThemedText style={styles.buttonText}>
+              {item.label}
+            </ThemedText>
+          </Pressable>
         ))}
-      </ScrollView>
+      </View>
     </ScreenWrapper>
-  );
-}
-
-export default memo(ChapterOverviewScreen);
-
-/* -------------------------------------------------------------------------- */
-
-function SectionButton({
-  label,
-  onPress,
-}: {
-  label: string;
-  onPress: () => void;
-}) {
-  return (
-    <Pressable style={styles.card} onPress={onPress}>
-      <ThemedText style={styles.cardText}>{label}</ThemedText>
-    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: Spacing.xl,
-    paddingBottom: 140,
+    padding: Spacing.xl,
   },
-
   title: {
     ...Typography.h3,
     textAlign: "center",
     marginBottom: Spacing.xl,
   },
-
-  card: {
+  button: {
     backgroundColor: JiguuColors.surface,
-    paddingVertical: Spacing.lg,
+    padding: Spacing.lg,
     borderRadius: 16,
     marginBottom: Spacing.md,
   },
-
-  cardText: {
+  buttonText: {
     ...Typography.body,
-    textAlign: "center",
     fontWeight: "600",
-  },
-
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    textAlign: "center",
   },
 });
