@@ -3,196 +3,107 @@
 // SEARCH INDEX BUILDER
 //
 // Purpose:
-// Builds a GLOBAL searchable index from all
-// offline content in the app.
+// Builds a flat, optimized in-memory index of EVERYTHING
+// that can be searched globally:
 //
-// This powers:
-// - Header search bar
-// - Voice search
-// - Question lookup
-// - Example/Theorem lookup
+// • Chapters
+// • Exercises
+// • Questions
+// • Question Parts
+// • Examples
+// • Theorems
+// • MCQs
+// • Formulas
 //
-// Index Includes:
-// - Chapters
-// - Exercises
-// - Questions
-// - Question parts
-// - Examples
-// - Theorems
-// - MCQs
-// - Formulas
+// Used by:
+// - SearchProvider
+// - Query Engine
 //
-// Runs ONCE when app starts (inside SearchProvider).
+// This runs ONCE at app start.
 // --------------------------------------------------
 
 import { class10Chapters } from "@/data/formulas";
-import { formulaData } from "@/data/formulas";
 import { chaptersContent } from "@/data/chaptersContent";
 
 /* --------------------------------------------------
-   SEARCH ENTITY TYPES
+   TYPES
 -------------------------------------------------- */
 
 export type SearchEntityType =
   | "chapter"
   | "exercise"
   | "question"
-  | "part"
+  | "question-part"
   | "example"
   | "theorem"
   | "mcq"
   | "formula";
 
-/* --------------------------------------------------
-   INDEX ITEM STRUCTURE
--------------------------------------------------- */
-
 export interface SearchIndexItem {
   id: string;
+  label: string;
   type: SearchEntityType;
-
-  title: string;
-  subtitle?: string;
-
-  chapterId: string;
-  chapterName: string;
-
-  exerciseNumber?: string;
-  questionNumber?: string;
-  partLabel?: string;
-
   keywords: string[];
+  chapterId: string;
+
+  // Navigation helpers
+  exerciseNumber?: string;
+  questionId?: string;
 }
 
 /* --------------------------------------------------
-   UTILITY
+   NORMALIZER
 -------------------------------------------------- */
 
 function normalize(text: string): string {
-  return text.toLowerCase().trim();
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s.]/g, "")
+    .trim();
 }
 
 /* --------------------------------------------------
-   MAIN BUILDER
+   INDEX BUILDER
 -------------------------------------------------- */
 
 export function buildSearchIndex(): SearchIndexItem[] {
   const index: SearchIndexItem[] = [];
 
-  /* -------------------------------
-     CHAPTERS
-  -------------------------------- */
+  /* ---------------- CHAPTERS ---------------- */
 
   class10Chapters.forEach((chapter) => {
     index.push({
       id: chapter-${chapter.id},
+      label: chapter.name,
       type: "chapter",
-      title: chapter.name,
-      subtitle: "Chapter",
+      keywords: normalize(chapter.name).split(" "),
       chapterId: chapter.id,
-      chapterName: chapter.name,
-      keywords: [normalize(chapter.name)],
     });
   });
 
-  /* -------------------------------
-     EXERCISES / QUESTIONS
-  -------------------------------- */
+  /* ---------------- EXERCISES ---------------- */
 
   chaptersContent.forEach((chapter) => {
     chapter.exercises.forEach((exercise) => {
       index.push({
         id: exercise-${chapter.id}-${exercise.number},
+        label: Exercise ${exercise.number},
         type: "exercise",
-        title: Exercise ${exercise.number},
-        subtitle: chapter.name,
-        chapterId: chapter.id,
-        chapterName: chapter.name,
-        exerciseNumber: exercise.number,
         keywords: [
-          normalize(chapter.name),
-          normalize(exercise.number),
           "exercise",
+          exercise.number,
+          chapter.name,
         ],
-      });
-
-      // 🔮 Placeholder for later when questions/parts added
-      if ((exercise as any).questions) {
-        (exercise as any).questions.forEach((q: any, qIndex: number) => {
-          const qLabel = ${exercise.number} Q${qIndex + 1};
-
-          index.push({
-            id: question-${chapter.id}-${qLabel},
-            type: "question",
-            title: Question ${qIndex + 1},
-            subtitle: Exercise ${exercise.number},
-            chapterId: chapter.id,
-            chapterName: chapter.name,
-            exerciseNumber: exercise.number,
-            questionNumber: ${qIndex + 1},
-            keywords: [
-              normalize(chapter.name),
-              normalize(exercise.number),
-              q${qIndex + 1},
-            ],
-          });
-
-          if (q.parts) {
-            q.parts.forEach((part: any) => {
-              index.push({
-                id: part-${chapter.id}-${qLabel}-${part.label},
-                type: "part",
-                title: Part ${part.label},
-                subtitle: qLabel,
-                chapterId: chapter.id,
-                chapterName: chapter.name,
-                exerciseNumber: exercise.number,
-                questionNumber: ${qIndex + 1},
-                partLabel: part.label,
-                keywords: [
-                  normalize(chapter.name),
-                  normalize(exercise.number),
-                  normalize(part.label),
-                ],
-              });
-            });
-          }
-        });
-      }
-    });
-  });
-
-  /* -------------------------------
-     FORMULAS
-  -------------------------------- */
-
-  Object.entries(formulaData).forEach(([chapterId, formulas]) => {
-    formulas.forEach((f) => {
-      index.push({
-        id: formula-${f.id},
-        type: "formula",
-        title: f.title,
-        subtitle: "Formula",
-        chapterId,
-        chapterName:
-          class10Chapters.find((c) => c.id === chapterId)?.name ||
-          "Unknown Chapter",
-        keywords: [
-          normalize(f.title),
-          normalize(chapterId),
-          "formula",
-        ],
+        chapterId: chapter.id,
+        exerciseNumber: exercise.number,
       });
     });
   });
 
-  /* -------------------------------
-     MCQs / EXAMPLES / THEOREMS
-     (expandable later)
-  -------------------------------- */
-
-  // These will be added when
-  // data models appear in chaptersContent.ts
+  /* --------------------------------------------------
+     (QUESTIONS / PARTS / EXAMPLES / THEOREMS / MCQs)
+     → Will auto index once added into chaptersContent
+  -------------------------------------------------- */
 
   return index;
 }
