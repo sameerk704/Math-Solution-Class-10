@@ -66,7 +66,7 @@ function normalize(text: string): string {
    INDEX BUILDER
 -------------------------------------------------- */
 
-export function buildSearchIndex(): SearchIndexItem[] {
+export async function buildSearchIndex(): Promise<SearchIndexItem[]> {
   const index: SearchIndexItem[] = [];
 
   /* ---------------- CHAPTERS ---------------- */
@@ -89,11 +89,9 @@ export function buildSearchIndex(): SearchIndexItem[] {
         id: exercise-${chapter.id}-${exercise.number},
         label: Exercise ${exercise.number},
         type: "exercise",
-        keywords: [
-          "exercise",
-          exercise.number,
-          chapter.name,
-        ],
+        keywords: normalize(
+          exercise ${exercise.number} ${chapter.name}
+        ).split(" "),
         chapterId: chapter.id,
         exerciseNumber: exercise.number,
       });
