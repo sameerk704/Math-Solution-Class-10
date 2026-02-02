@@ -13,13 +13,13 @@
 // - Key Points
 // - MCQs
 // - Exercise Hub
-// - Question List (next step)
+// - Question List
 // - Quick Notes
 // - News & Events
 // - About Educator
 //
-// All screens here are wrapped by ScreenWrapper
-// which provides static header & footer.
+// All screens are wrapped by ScreenWrapper which
+// provides static header & footer.
 // --------------------------------------------------
 
 import React from "react";
@@ -34,6 +34,7 @@ import KeyPointsScreen from "@/screens/KeyPointsScreen";
 import MCQScreen from "@/screens/MCQScreen";
 
 import ExerciseHubScreen from "@/screens/ExerciseHubScreen";
+import QuestionListScreen from "@/screens/QuestionListScreen";
 
 import QuickNotesScreen from "@/screens/QuickNotesScreen";
 import NewsEventsScreen from "@/screens/NewsEventsScreen";
@@ -108,10 +109,15 @@ export default function RootStackNavigator() {
 
       <Stack.Screen name="MCQs" component={MCQScreen} />
 
-      <Stack.Screen name="ExerciseHub" component={ExerciseHubScreen} />
+      <Stack.Screen
+        name="ExerciseHub"
+        component={ExerciseHubScreen}
+      />
 
-      {/* Question List screen will be implemented next */}
-      {/* <Stack.Screen name="QuestionList" component={QuestionListScreen} /> */}
+      <Stack.Screen
+        name="QuestionList"
+        component={QuestionListScreen}
+      />
 
       <Stack.Screen name="QuickNotes" component={QuickNotesScreen} />
 
