@@ -1,189 +1,96 @@
 // src/data/chaptersContent.ts
-// =======================================================
-// OFFLINE CHAPTER CONTENT DATABASE
+// --------------------------------------------------
+// CENTRAL OFFLINE CONTENT SOURCE FOR ALL CHAPTERS
 //
-// Used by:
-// - ChapterOverviewScreen
-// - IntroScreen
-// - KeyPointsScreen
-// - MCQScreen
+// Controls:
+// - Intro text
+// - Key points
+// - MCQs
+// - Exercises
+// - Questions
+// - Parts
 //
-// All Class 10 chapters 1–14 are included here.
-// Safe fallback guaranteed.
-// =======================================================
+// Every chapter ALWAYS returns:
+// Intro / KeyPoints / MCQs / Exercises[]
+// --------------------------------------------------
+
+export type QuestionPart = {
+  id: string;
+  text: string;
+};
+
+export type Question = {
+  id: string;
+  text: string;
+  parts: QuestionPart[];
+};
 
 export type Exercise = {
   number: number;
-};
-
-export type MCQ = {
-  id: string;
-  question: string;
-  options: string[];
+  questions: Question[];
 };
 
 export type ChapterContent = {
-  id: string;
-  title: string;
-  introductionText: string;
+  chapterId: string;
+  intro: string;
+  keyPoints: string[];
+  mcqs: string[];
   exercises: Exercise[];
-  mcqs: MCQ[];
-  sections: {
-    type: "keypoints";
-  }[];
 };
 
-// -------------------------------------------------------
+/* -------------------------------------------------- */
 
-export const chaptersContent: ChapterContent[] = [
-  // =====================================================
-  // 1–5
-  // =====================================================
+function buildDefaultExercises(): Exercise[] {
+  return [
+    {
+      number: 1,
+      questions: [
+        {
+          id: "q1",
+          text: "Solve the given problem.",
+          parts: [
+            { id: "a", text: "Part (a)" },
+            { id: "b", text: "Part (b)" },
+          ],
+        },
+        {
+          id: "q2",
+          text: "Find the required value.",
+          parts: [],
+        },
+      ],
+    },
+    {
+      number: 2,
+      questions: [
+        {
+          id: "q1",
+          text: "Prove the statement.",
+          parts: [],
+        },
+      ],
+    },
+    {
+      number: 3,
+      questions: [
+        {
+          id: "q1",
+          text: "Calculate area.",
+          parts: [],
+        },
+      ],
+    },
+  ];
+}
 
-  {
-    id: "real-numbers",
-    title: "Real Numbers",
-    introductionText: "Introduction content will be added later.",
-    exercises: [{ number: 1 }, { number: 2 }, { number: 3 }],
-    mcqs: [],
-    sections: [{ type: "keypoints" }],
-  },
-
-  {
-    id: "polynomials",
-    title: "Polynomials",
-    introductionText: "Introduction content will be added later.",
-    exercises: [{ number: 1 }, { number: 2 }, { number: 3 }],
-    mcqs: [],
-    sections: [{ type: "keypoints" }],
-  },
-
-  {
-    id: "pair-linear",
-    title: "Pair of Linear Equations",
-    introductionText: "Introduction content will be added later.",
-    exercises: [{ number: 1 }, { number: 2 }],
-    mcqs: [],
-    sections: [{ type: "keypoints" }],
-  },
-
-  {
-    id: "quadratic",
-    title: "Quadratic Equations",
-    introductionText: "Introduction content will be added later.",
-    exercises: [{ number: 1 }, { number: 2 }],
-    mcqs: [],
-    sections: [{ type: "keypoints" }],
-  },
-
-  {
-    id: "arithmetic",
-    title: "Arithmetic Progressions",
-    introductionText: "Introduction content will be added later.",
-    exercises: [{ number: 1 }, { number: 2 }],
-    mcqs: [],
-    sections: [{ type: "keypoints" }],
-  },
-
-  // =====================================================
-  // 6–14  ✅ NEWLY ADDED
-  // =====================================================
-
-  {
-    id: "triangles",
-    title: "Triangles",
-    introductionText: "Introduction content will be added later.",
-    exercises: [{ number: 1 }, { number: 2 }],
-    mcqs: [],
-    sections: [{ type: "keypoints" }],
-  },
-
-  {
-    id: "coordinate-geometry",
-    title: "Coordinate Geometry",
-    introductionText: "Introduction content will be added later.",
-    exercises: [{ number: 1 }, { number: 2 }],
-    mcqs: [],
-    sections: [{ type: "keypoints" }],
-  },
-
-  {
-    id: "intro-trigonometry",
-    title: "Introduction to Trigonometry",
-    introductionText: "Introduction content will be added later.",
-    exercises: [{ number: 1 }, { number: 2 }],
-    mcqs: [],
-    sections: [{ type: "keypoints" }],
-  },
-
-  {
-    id: "applications-trigonometry",
-    title: "Applications of Trigonometry",
-    introductionText: "Introduction content will be added later.",
-    exercises: [{ number: 1 }, { number: 2 }],
-    mcqs: [],
-    sections: [{ type: "keypoints" }],
-  },
-
-  {
-    id: "circles",
-    title: "Circles",
-    introductionText: "Introduction content will be added later.",
-    exercises: [{ number: 1 }, { number: 2 }],
-    mcqs: [],
-    sections: [{ type: "keypoints" }],
-  },
-
-  {
-    id: "areas-circles",
-    title: "Areas Related to Circles",
-    introductionText: "Introduction content will be added later.",
-    exercises: [{ number: 1 }, { number: 2 }],
-    mcqs: [],
-    sections: [{ type: "keypoints" }],
-  },
-
-  {
-    id: "surface-areas-volumes",
-    title: "Surface Areas and Volumes",
-    introductionText: "Introduction content will be added later.",
-    exercises: [{ number: 1 }, { number: 2 }],
-    mcqs: [],
-    sections: [{ type: "keypoints" }],
-  },
-
-  {
-    id: "statistics",
-    title: "Statistics",
-    introductionText: "Introduction content will be added later.",
-    exercises: [{ number: 1 }, { number: 2 }],
-    mcqs: [],
-    sections: [{ type: "keypoints" }],
-  },
-
-  {
-    id: "probability",
-    title: "Probability",
-    introductionText: "Introduction content will be added later.",
-    exercises: [{ number: 1 }, { number: 2 }],
-    mcqs: [],
-    sections: [{ type: "keypoints" }],
-  },
-];
-
-// -------------------------------------------------------
+/* -------------------------------------------------- */
 
 export function getChapterContent(chapterId: string): ChapterContent {
-  const found = chaptersContent.find((c) => c.id === chapterId);
-
-  return (
-    found ?? {
-      id: chapterId,
-      title: "Unknown Chapter",
-      introductionText: "Content will be added later.",
-      exercises: [],
-      mcqs: [],
-      sections: [],
-    }
-  );
+  return {
+    chapterId,
+    intro: "Introduction content will be added later.",
+    keyPoints: ["Key point 1", "Key point 2"],
+    mcqs: [],
+    exercises: buildDefaultExercises(),
+  };
 }
