@@ -73,7 +73,7 @@ export async function buildSearchIndex(): Promise<SearchIndexItem[]> {
 
   class10Chapters.forEach((chapter) => {
     index.push({
-      id: chapter-${chapter.id},
+      id: `chapter-${chapter.id}`,
       label: chapter.name,
       type: "chapter",
       keywords: normalize(chapter.name).split(" "),
@@ -86,11 +86,11 @@ export async function buildSearchIndex(): Promise<SearchIndexItem[]> {
   chaptersContent.forEach((chapter) => {
     chapter.exercises.forEach((exercise) => {
       index.push({
-        id: exercise-${chapter.id}-${exercise.number},
-        label: Exercise ${exercise.number},
+        id: `exercise-${chapter.id}-${exercise.number}`,
+        label: `Exercise ${exercise.number}`,
         type: "exercise",
         keywords: normalize(
-          exercise ${exercise.number} ${chapter.name}
+          `exercise ${exercise.number} ${chapter.name}`
         ).split(" "),
         chapterId: chapter.id,
         exerciseNumber: exercise.number,
