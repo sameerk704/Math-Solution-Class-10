@@ -43,10 +43,7 @@ function normalize(text: string): string {
    QUERY MATCHING
 -------------------------------------------------- */
 
-function scoreMatch(
-  query: string,
-  item: SearchIndexItem
-): number {
+function scoreMatch(query: string, item: SearchIndexItem): number {
   let score = 0;
 
   const q = normalize(query);
@@ -76,7 +73,7 @@ function scoreMatch(
    MAIN QUERY FUNCTION
 -------------------------------------------------- */
 
-export function querySearchIndex(
+export function runSearchQuery(
   query: string,
   index: SearchIndexItem[],
   limit = 25
