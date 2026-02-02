@@ -3,54 +3,70 @@
 // SEARCH QUERY ENGINE
 //
 // Purpose:
-// Executes user queries against the global
-// search index produced by searchIndexBuilder.
+// Runs user queries against the global search index
+// and returns ranked results.
 //
-// Features:
-// - Partial matching
-// - Tokenization
-// - Ranking by relevance
-// - Offline operation
-// - Optimized for mobile
+// Supports:
+// • partial words
+// • NCERT numbering (3.2 / 5.1)
+// • chapter names
+// • voice transcription input
+// • fuzzy contains matching
 //
 // Used by:
-// - Header search bar
-// - Voice search
+// - SearchProvider
+// - Header Search Bar
 // --------------------------------------------------
 
 import { SearchIndexItem } from "./searchIndexBuilder";
 
 /* --------------------------------------------------
-   HELPERS
+   TYPES
 -------------------------------------------------- */
 
-function normalize(text: string): string {
-  return text.toLowerCase().trim();
-}
-
-function tokenize(text: string): string[] {
-  return normalize(text)
-    .split(/[\s,.-]+/)
-    .filter(Boolean);
+export interface SearchResult extends SearchIndexItem {
+  score: number;
 }
 
 /* --------------------------------------------------
-   SCORING ENGINE
+   NORMALIZATION
 -------------------------------------------------- */
 
-function scoreItem(item: SearchIndexItem, tokens: string[]): number {
+function normalize(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s.]/g, "")
+    .trim();
+}
+
+/* --------------------------------------------------
+   QUERY MATCHING
+-------------------------------------------------- */
+
+function scoreMatch(
+  query: string,
+  item: SearchIndexItem
+): number {
   let score = 0;
 
-  tokens.forEach((token) => {
-    if (item.title.toLowerCase().includes(token)) score += 5;
-    if (item.subtitle?.toLowerCase().includes(token)) score += 3;
+  const q = normalize(query);
+  const tokens = q.split(" ");
 
-    item.keywords.forEach((kw) => {
-      if (kw.includes(token)) score += 4;
-    });
+  const label = normalize(item.label);
+  const keywords = item.keywords.map(normalize);
 
-    if (item.exerciseNumber?.includes(token)) score += 2;
-    if (item.questionNumber?.includes(token)) score += 2;
+  // Exact label match
+  if (label === q) score += 100;
+
+  // Label contains
+  if (label.includes(q)) score += 60;
+
+  // Token matches
+  tokens.forEach((t) => {
+    if (label.includes(t)) score += 20;
+    if (keywords.includes(t)) score += 15;
+
+    if (item.exerciseNumber === t) score += 50;
   });
 
   return score;
@@ -60,24 +76,27 @@ function scoreItem(item: SearchIndexItem, tokens: string[]): number {
    MAIN QUERY FUNCTION
 -------------------------------------------------- */
 
-export function runSearchQuery(
+export function querySearchIndex(
   query: string,
   index: SearchIndexItem[],
-  limit = 40
-): SearchIndexItem[] {
+  limit = 25
+): SearchResult[] {
   if (!query.trim()) return [];
 
-  const tokens = tokenize(query);
+  const results: SearchResult[] = [];
 
-  const scored = index
-    .map((item) => ({
-      item,
-      score: scoreItem(item, tokens),
-    }))
-    .filter((x) => x.score > 0)
+  index.forEach((item) => {
+    const score = scoreMatch(query, item);
+
+    if (score > 0) {
+      results.push({
+        ...item,
+        score,
+      });
+    }
+  });
+
+  return results
     .sort((a, b) => b.score - a.score)
-    .slice(0, limit)
-    .map((x) => x.item);
-
-  return scored;
+    .slice(0, limit);
 }
