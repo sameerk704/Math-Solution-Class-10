@@ -2,99 +2,71 @@
 // --------------------------------------------------
 // SOLUTION SCREEN
 //
-// Displays:
-// - Question text
-// - Step-by-step solution
-// - Final answer
+// Purpose:
+// Displays full worked solution for a question part.
 //
-// Params:
+// Example:
+// Exercise 1.1 → Question 3 → Part (ii)
+//
+// Navigation Params:
 // - chapterId
 // - chapterName
 // - exerciseNumber
 // - questionNumber
-// - partId
+// - partLabel
+//
+// This layer is final in the exercise flow.
+//
+// Future:
+// - Images
+// - Diagrams
+// - Latex rendering
+// - Step-by-step toggle
 // --------------------------------------------------
 
 import React, { memo } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
 
 import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { ThemedText } from "@/components/ThemedText";
 
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
-import {
-  getSolutionForPart,
-} from "@/data/chapterSolutions";
-
 import { JiguuColors, Spacing, Typography } from "@/constants/theme";
 
-type RouteProps = RouteProp<
-  RootStackParamList,
-  "Solution"
->;
+type RouteProps = RouteProp<RootStackParamList, "Solution">;
 
 function SolutionScreen() {
   const route = useRoute<RouteProps>();
 
   const {
-    chapterId,
     chapterName,
     exerciseNumber,
     questionNumber,
-    partId,
+    partLabel,
   } = route.params;
-
-  const solution = getSolutionForPart(
-    chapterId,
-    partId
-  );
 
   return (
     <ScreenWrapper showBackButton>
-      <View style={styles.container}>
-        <ThemedText style={styles.title}>
-          Ex {exerciseNumber} — Q{questionNumber} {partId}
+      <ScrollView contentContainerStyle={styles.container}>
+        <ThemedText style={styles.title}>{chapterName}</ThemedText>
+
+        <ThemedText style={styles.subtitle}>
+          Exercise {exerciseNumber} — Question {questionNumber} {partLabel}
         </ThemedText>
 
-        {!solution ? (
-          <ThemedText style={styles.empty}>
-            Solution not added yet.
+        <View style={styles.card}>
+          <ThemedText style={styles.solutionText}>
+            Solution content will appear here.
+
+            {"\n\n"}This section will contain:
+            {"\n"}• Step-by-step derivation
+            {"\n"}• Final answer
+            {"\n"}• Formula references
+            {"\n"}• Diagrams (later)
           </ThemedText>
-        ) : (
-          <>
-            <View style={styles.card}>
-              <ThemedText style={styles.question}>
-                {solution.questionText}
-              </ThemedText>
-            </View>
-
-            <FlatList
-              data={solution.steps}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item, index }) => (
-                <View style={styles.step}>
-                  <ThemedText style={styles.stepNo}>
-                    Step {index + 1}
-                  </ThemedText>
-                  <ThemedText style={styles.stepText}>
-                    {item.text}
-                  </ThemedText>
-                </View>
-              )}
-            />
-
-            <View style={styles.answerBox}>
-              <ThemedText style={styles.answerTitle}>
-                Final Answer
-              </ThemedText>
-              <ThemedText style={styles.answerText}>
-                {solution.finalAnswer}
-              </ThemedText>
-            </View>
-          </>
-        )}
-      </View>
+        </View>
+      </ScrollView>
     </ScreenWrapper>
   );
 }
@@ -104,61 +76,30 @@ export default memo(SolutionScreen);
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: Spacing.xl,
-    paddingBottom: 120,
+    paddingBottom: 140,
   },
 
   title: {
     ...Typography.h3,
     textAlign: "center",
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.sm,
   },
 
-  empty: {
+  subtitle: {
+    ...Typography.body,
     textAlign: "center",
+    marginBottom: Spacing.xl,
     color: JiguuColors.textSecondary,
   },
 
   card: {
     backgroundColor: JiguuColors.surface,
-    padding: Spacing.lg,
-    borderRadius: 16,
-    marginBottom: Spacing.lg,
+    padding: Spacing.xl,
+    borderRadius: 18,
   },
 
-  question: {
+  solutionText: {
     ...Typography.body,
-    fontWeight: "600",
-  },
-
-  step: {
-    backgroundColor: JiguuColors.surfaceLight,
-    padding: Spacing.md,
-    borderRadius: 12,
-    marginBottom: Spacing.sm,
-  },
-
-  stepNo: {
-    fontWeight: "700",
-    marginBottom: 4,
-  },
-
-  stepText: {
-    ...Typography.body,
-  },
-
-  answerBox: {
-    backgroundColor: "#E8F5E9",
-    padding: Spacing.lg,
-    borderRadius: 16,
-    marginTop: Spacing.lg,
-  },
-
-  answerTitle: {
-    fontWeight: "700",
-    marginBottom: 4,
-  },
-
-  answerText: {
-    ...Typography.body,
+    lineHeight: 24,
   },
 });
