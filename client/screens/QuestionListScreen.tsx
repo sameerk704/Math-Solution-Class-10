@@ -1,24 +1,3 @@
-// src/screens/QuestionListScreen.tsx
-// --------------------------------------------------
-// QUESTION LIST SCREEN
-//
-// Purpose:
-// Shows all questions for a selected exercise.
-//
-// Currently:
-// - Placeholder list generated safely.
-// - Real data will be injected later from
-//   chapterQuestions.ts.
-//
-// Params:
-// - chapterId
-// - chapterName
-// - exerciseNumber
-//
-// Next:
-// Question → Parts Screen
-// --------------------------------------------------
-
 import React, { memo } from "react";
 import { View, StyleSheet, FlatList, Pressable } from "react-native";
 import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
@@ -28,24 +7,25 @@ import { ScreenWrapper } from "@/components/ScreenWrapper";
 import { ThemedText } from "@/components/ThemedText";
 
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import {
+  getQuestionsForExercise,
+} from "@/data/chapterQuestions";
 
 import { JiguuColors, Spacing, Typography } from "@/constants/theme";
 
 type RouteProps = RouteProp<RootStackParamList, "QuestionList">;
-
 type NavProp = NativeStackNavigationProp<RootStackParamList>;
 
 function QuestionListScreen() {
   const route = useRoute<RouteProps>();
   const navigation = useNavigation<NavProp>();
 
-  const { chapterName, exerciseNumber } = route.params;
+  const { chapterId, chapterName, exerciseNumber } = route.params;
 
-  // TEMP SAFE QUESTIONS
-  const questions = Array.from({ length: 5 }).map((_, i) => ({
-    id: q-${i + 1},
-    label: Question ${i + 1},
-  }));
+  const questions = getQuestionsForExercise(
+    chapterId,
+    exerciseNumber
+  );
 
   return (
     <ScreenWrapper showBackButton>
@@ -61,11 +41,16 @@ function QuestionListScreen() {
             <Pressable
               style={styles.card}
               onPress={() =>
-                console.log("Future → Question Parts Screen")
+                navigation.navigate("QuestionParts", {
+                  chapterId,
+                  chapterName,
+                  exerciseNumber,
+                  questionNumber: item.number,
+                })
               }
             >
               <ThemedText style={styles.text}>
-                {item.label}
+                Question {item.number}
               </ThemedText>
             </Pressable>
           )}
