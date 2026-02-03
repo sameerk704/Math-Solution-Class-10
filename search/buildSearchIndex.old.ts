@@ -1,3 +1,4 @@
+
 // src/search/buildSearchIndex.ts
 // --------------------------------------------------
 // SEARCH INDEX BUILDER
