@@ -10,11 +10,11 @@
 // --------------------------------------------------
 
 import React from "react";
-import { StyleSheet, View, Pressable } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { ScreenWrapper } from "@/components/ScreenWrapper";
+import ScreenWrapper from "@/components/ScreenWrapper";
 import { ThemedText } from "@/components/ThemedText";
 import { Spacing, JiguuColors, Typography } from "@/constants/theme";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
@@ -28,17 +28,22 @@ export default function ChapterOverviewScreen() {
 
   const { chapterId, chapterName } = route.params;
 
+  // ✅ OPTIONS LIST (ONLY HERE)
+  const options = [
+    { label: "INTRODUCTION", screen: "Intro" },
+    { label: "KEY POINTS", screen: "KeyPoints" },
+    { label: "MCQs", screen: "MCQs" },
+    { label: "EXERCISES", screen: "Exercises" },
+    { label: "EXAMPLES", screen: "Examples" },
+    { label: "THEOREMS", screen: "Theorems" },
+  ];
+
   return (
     <ScreenWrapper showBackButton>
       <View style={styles.container}>
         <ThemedText style={styles.title}>{chapterName}</ThemedText>
 
-        {[
-          { label: "INTRODUCTION", screen: "Intro" },
-          { label: "KEY POINTS", screen: "KeyPoints" },
-          { label: "MCQs", screen: "MCQs" },
-          { label: "EXERCISES", screen: "ExerciseHub" },
-        ].map((item) => (
+        {options.map((item) => (
           <Pressable
             key={item.label}
             style={styles.button}
@@ -63,17 +68,20 @@ const styles = StyleSheet.create({
   container: {
     padding: Spacing.xl,
   },
+
   title: {
     ...Typography.h3,
     textAlign: "center",
     marginBottom: Spacing.xl,
   },
+
   button: {
     backgroundColor: JiguuColors.surface,
     padding: Spacing.lg,
     borderRadius: 16,
     marginBottom: Spacing.md,
   },
+
   buttonText: {
     ...Typography.body,
     fontWeight: "600",
