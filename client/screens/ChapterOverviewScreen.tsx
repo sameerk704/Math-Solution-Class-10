@@ -14,7 +14,7 @@ import { View, StyleSheet, Pressable } from "react-native";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import ScreenWrapper from "@/components/ScreenWrapper";
+import {ScreenWrapper} from "@/components/ScreenWrapper";
 import { ThemedText } from "@/components/ThemedText";
 import { Spacing, JiguuColors, Typography } from "@/constants/theme";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
